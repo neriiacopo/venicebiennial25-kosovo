@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
+import { useTheme } from "@mui/material";
 
 import { useStore } from "../store/useStore";
 
 export default function Cursor() {
+    const theme = useTheme();
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [hover, setHovering] = useState(false);
     const hoverClasses = useStore.getState().hoverClasses;
+    const imgHover = useStore((state) => state.imgHover);
 
     useEffect(() => {
         const moveCursor = (e) => {
@@ -46,10 +49,12 @@ export default function Cursor() {
                 position: "fixed",
                 top: position.y,
                 left: position.x,
-                width: `${16 + hover * 10}px`,
-                height: `${16 + hover * 10}px`,
-                border: `1px solid ${hover ? "black" : "whitesmoke"}`,
-                backgroundColor: !hover ? "black" : "whitesmoke",
+                width: `${16 + (hover | imgHover) * 10}px`,
+                height: `${16 + (hover | imgHover) * 10}px`,
+                border: `1px solid ${
+                    hover | imgHover ? "black" : "whitesmoke"
+                }`,
+                backgroundColor: hover | imgHover ? "whitesmoke" : "black",
                 borderRadius: "50%",
                 pointerEvents: "none",
                 transform: "translate(-50%, -50%)",

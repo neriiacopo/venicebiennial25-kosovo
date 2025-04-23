@@ -1,5 +1,5 @@
 import { useThree, useFrame } from "@react-three/fiber";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStore } from "../store/useStore.jsx";
 import gsap from "gsap";
 
@@ -7,6 +7,9 @@ export default function CameraController() {
     const { camera, pointer } = useThree();
     const cameraSettings = useStore((state) => state.cameraSettings);
     const cameraLock = useStore((state) => state.cameraLock);
+    const selectedId = useStore((state) => state.selectedId);
+
+    const cameraSpeed = useRef({ value: 0 });
 
     const targetRotation = useRef({ x: 0, y: 0 });
     const targetPan = useRef({ x: 0, y: 0 });
@@ -19,6 +22,8 @@ export default function CameraController() {
 
     // Handle FOV changes
     useEffect(() => {
+        targetPan.current = { x: 0, y: 0 };
+        targetRotation.current = { x: 0, y: 0 };
         if (cameraSettings.fov !== undefined) {
             gsap.to(camera.position, {
                 duration: 1,
@@ -36,8 +41,31 @@ export default function CameraController() {
                     camera.updateProjectionMatrix();
                 },
             });
+
+            // Speed
+            cameraSpeed.current.value = 0;
+            gsap.to(cameraSpeed.current, {
+                value: 1,
+                duration: 2,
+                ease: "power2.in",
+                onUpdate: () => {},
+            });
         }
     }, [cameraSettings]);
+
+    useEffect(() => {
+        if (!selectedId) {
+            console.log("test");
+            // Speed
+            cameraSpeed.current.value = 0;
+            gsap.to(cameraSpeed.current, {
+                value: 1,
+                duration: 2,
+                ease: "power2.in",
+                onUpdate: () => {},
+            });
+        }
+    }, [selectedId]);
 
     useEffect(() => {
         // targetPan.current = { x: 0, y: 0 };
@@ -58,9 +86,13 @@ export default function CameraController() {
 
                 // Smoothly interpolate (inertia)
                 targetRotation.current.x +=
-                    (targetX - targetRotation.current.x) * 0.05;
+                    (targetX - targetRotation.current.x) *
+                    0.05 *
+                    cameraSpeed.current.value;
                 targetRotation.current.y +=
-                    (targetY - targetRotation.current.y) * 0.05;
+                    (targetY - targetRotation.current.y) *
+                    0.05 *
+                    cameraSpeed.current.value;
 
                 // Apply rotation
                 camera.rotation.x = targetRotation.current.x;
@@ -77,8 +109,14 @@ export default function CameraController() {
                 const targetY = pointer.y * maxPanY;
 
                 // Lerp to new pan values (inertia)
-                targetPan.current.x += (targetX - targetPan.current.x) * 0.02;
-                targetPan.current.y += (targetY - targetPan.current.y) * 0.02;
+                targetPan.current.x +=
+                    (targetX - targetPan.current.x) *
+                    0.02 *
+                    cameraSpeed.current.value;
+                targetPan.current.y +=
+                    (targetY - targetPan.current.y) *
+                    0.02 *
+                    cameraSpeed.current.value;
 
                 // Apply to camera position while keeping Z fixed
                 camera.position.set(

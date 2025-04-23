@@ -1,32 +1,68 @@
 import "./style.css";
 import ReactDOM from "react-dom/client";
-const root = ReactDOM.createRoot(document.querySelector("#root"));
-import { ThemeProvider } from "@mui/material/styles";
+
+import { useEffect, useState } from "react";
+import * as THREE from "three";
+import { excelToJson } from "./utils.js";
+import { useStore } from "./store/useStore.jsx";
+import App from "./scene/App";
+import Ui from "./ui/Ui";
+import { ThemeProvider, CssBaseline } from "@mui/material";
 import theme from "./ui/theme.js";
 
-import App from "./App";
-import Ui from "./ui/Ui";
-import { useStore } from "./store/useStore";
+const root = ReactDOM.createRoot(document.querySelector("#root"));
+root.render(<AppWrapper />);
 
-const setScale = useStore.getState().setScale;
+function AppWrapper() {
+    const [ready, setReady] = useState(false);
+    const setScale = useStore((state) => state.setScale);
 
-Init();
-root.render(
-    <>
+    useEffect(() => {
+        async function Init() {
+            const data = await excelToJson("data/content.xlsx");
+
+            const processedData = await Promise.all(
+                data.data.map(async (item, i) => {
+                    const path = `data/imgs/${item.image}.${item.extension}`;
+
+                    const texture = await new Promise((resolve) =>
+                        new THREE.TextureLoader().load(path, resolve)
+                    );
+
+                    const aspectRatio = await new Promise((resolve) => {
+                        const img = new Image();
+                        img.src = path;
+                        img.onload = () => resolve(img.width / img.height || 1);
+                    });
+
+                    return {
+                        ...item,
+                        id: i,
+                        img: { texture, aspectRatio, path },
+                    };
+                })
+            );
+
+            console.log(processedData);
+            useStore.setState({
+                db: processedData,
+                narratives: data.columns,
+            });
+
+            setScale("m");
+            setReady(true);
+        }
+
+        Init();
+    }, []);
+
+    if (!ready) return null; // or a loading spinner
+
+    return (
         <ThemeProvider theme={theme}>
-            {/* Buttons */}
-            {/* <div style={{ position: "absolute", top: 20, left: 20, zIndex: 1 }}>
-            <button onClick={() => setScale("xl")}>Sphere</button>
-            <button onClick={() => setScale("m")}>Flat Grid</button>
-            <button onClick={() => setScale("xs")}>Inverted Sphere</button>
-        </div> */}
-
+            <CssBaseline />
             <Ui />
             <App />
         </ThemeProvider>
-    </>
-);
-
-async function Init() {
-    setScale("m");
+    );
 }

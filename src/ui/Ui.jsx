@@ -1,13 +1,21 @@
 import { Box } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
+import { useTheme } from "@mui/material/styles";
 
 import { useStore } from "../store/useStore";
 
-import ScrollPager from "./ScrollPager";
+import PageScroller from "./PageScroller";
 import BannerStates from "./BannerStates";
 import Cursor from "./Cursor";
+import NavFilters from "./NavFilters";
+import NavExtras from "./NavExtras";
+import ModalEntry from "./ModalEntry";
 
 export default function Ui() {
+    const theme = useTheme();
+
+    const selectedId = useStore((state) => state.selectedId);
+
     return (
         <>
             <Box
@@ -17,6 +25,7 @@ export default function Ui() {
                     position: "absolute",
                     width: "100vw",
                     height: "100vh",
+                    maxHeight: "100vh",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -25,10 +34,45 @@ export default function Ui() {
                     pointerEvents: "none",
                 }}
             >
+                {/* Extras */}
                 <Cursor />
-                <ScrollPager />
+                <PageScroller />
+
+                {/* Main */}
+                <Box
+                    sx={{
+                        flex: 1,
+                        width: "100%",
+                        height: "100%",
+                        mt: theme.bannerH,
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        pointerEvents: "none",
+                    }}
+                >
+                    <NavFilters />
+                    <ModalEntry />
+                    <NavExtras />
+                </Box>
+
+                {/* Bottom  */}
                 <BannerStates />
             </Box>
+            <Box
+                sx={{
+                    top: 0,
+                    left: 0,
+                    position: "absolute",
+                    width: "100vw",
+                    height: "100vh",
+                    zIndex: 1,
+                    pointerEvents: "none",
+                    opacity: selectedId ? 0.8 : 0,
+                    backgroundColor: theme.colors.white.main,
+                    transition: "opacity 0.5s ease-in-out",
+                }}
+            />
         </>
     );
 }

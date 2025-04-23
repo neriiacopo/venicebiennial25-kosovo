@@ -10,6 +10,7 @@ export default function GridArrow({
     res = { x: 36, y: 18 },
     width = 360,
     height = 180,
+    scaleFactor = 2,
     arrowFactor = 0.1,
 }) {
     const ref = useRef();
@@ -72,7 +73,7 @@ export default function GridArrow({
 
                     const startPts = interpolateTriple(
                         startSpherical,
-                        startFlat.map((v) => v * 2),
+                        startFlat.map((v) => v * scaleFactor),
                         startInvSpherical.map(
                             (p, index) =>
                                 endInvSpherical[index] +
@@ -86,7 +87,7 @@ export default function GridArrow({
                                 startSpherical[index] +
                                 (p - startSpherical[index]) * arrowFactor
                         ),
-                        endFlat.map((v) => v * 2),
+                        endFlat.map((v) => v * scaleFactor),
                         endInvSpherical,
                         u
                     );

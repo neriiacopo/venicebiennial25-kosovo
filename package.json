@@ -4,6 +4,7 @@
     "description": "website for the Kosovo Pavilion at the Venice Biennale 2025",
     "main": "index.js",
     "homepage": ".",
+    "type": "module",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
@@ -17,17 +18,20 @@
         "vite": "^5.0.10"
     },
     "dependencies": {
-        "@emotion/react": "^11.11.1",
-        "@emotion/styled": "^11.11.0",
-        "@mui/material": "^5.15.10",
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.0",
+        "@mui/icons-material": "^7.0.2",
+        "@mui/material": "^7.0.2",
         "@react-three/drei": "^9.95.3",
         "@react-three/fiber": "^8.13.6",
         "gsap": "^3.12.7",
         "leva": "^0.10.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-markdown": "^10.1.0",
         "three": "^0.161.0",
         "vite-plugin-top-level-await": "^1.5.0",
+        "xlsx": "^0.18.5",
         "zustand": "^4.4.0"
     }
 }

@@ -1,14 +1,18 @@
 import { create } from "zustand";
 
 export let useStore = create((set, get) => ({
+    narratives: [],
+    db: [],
+    selectedId: "",
     scales: ["xs", "m", "xl"],
-    scale: "xl", // or 'm' or 'xs'
+    scale: "m",
     cameraSettings: [],
     cameraLock: false,
+    imgHover: false,
+    activeNarratives: [],
+
     setScale: (scale) => {
         const options = get().cameraOptions[scale];
-
-        console.log(options);
         set({
             scale,
             cameraSettings: options,
@@ -38,6 +42,4 @@ export let useStore = create((set, get) => ({
             position: [0, 0, 140],
         },
     },
-
-    hoverClasses: [".MuiToggleButton-root"],
 }));

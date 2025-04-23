@@ -6,18 +6,19 @@ import { latLonToXYZ, mirrorPt, interpolateTriple } from "../utils.js";
 
 import { useStore } from "../store/useStore.jsx";
 
-export default function UVMap({ u, r }) {
+export default function UVMap({
+    u,
+    r,
+    res = { x: 36, y: 18 },
+    width = 360,
+    height = 180,
+    scaleFactor = 2,
+}) {
     const meshRef = useRef();
     const [vertices, setVertices] = useState([]);
 
-    const res = { x: 36, y: 18 };
-    const scaleM = 1;
-
     // Create base geometry
     const geometry = useMemo(() => {
-        const width = 360;
-        const height = 180;
-
         const geo = new THREE.PlaneGeometry(width, height, res.x, res.y);
 
         geo.rotateX(-Math.PI / 2);
@@ -33,7 +34,7 @@ export default function UVMap({ u, r }) {
         for (let i = 0; i < ptsMid.length; i += 3) {
             const flat = [ptsMid[i], ptsMid[i + 1], ptsMid[i + 2]];
 
-            const flatScaled = flat.map((v) => v * scaleM);
+            const flatScaled = flat.map((v) => v * scaleFactor);
 
             const sphere = latLonToXYZ([flat[0], 0, flat[2]], r, [0, r, 0]);
             const mirrored = mirrorPt(sphere, [null, 0, null]);
@@ -56,6 +57,8 @@ export default function UVMap({ u, r }) {
         }
         posAttr.needsUpdate = true;
         meshRef.current.geometry.computeVertexNormals();
+        meshRef.current.geometry.computeBoundingBox();
+        useStore.setState({ uvmap: meshRef.current.geometry.clone() });
     }, [u, vertices]);
 
     return (
@@ -63,13 +66,8 @@ export default function UVMap({ u, r }) {
             <mesh
                 ref={meshRef}
                 geometry={geometry}
-            >
-                <meshStandardMaterial
-                    wireframe={true}
-                    transparent={true}
-                    opacity={0}
-                />
-            </mesh>
+                visible={false}
+            ></mesh>
         </>
     );
 }

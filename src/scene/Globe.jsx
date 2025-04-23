@@ -1,6 +1,9 @@
 import { Sphere, Icosahedron } from "@react-three/drei";
 
+import { useStore } from "../store/useStore.jsx";
+
 export default function Globe({ u, r, offset = 0.1 }) {
+    const scale = useStore((state) => state.scale);
     return (
         <>
             <Icosahedron
@@ -10,6 +13,7 @@ export default function Globe({ u, r, offset = 0.1 }) {
                 material-transparent={true} // Enables transparency
                 material-opacity={1 - u * 2}
                 material-color={"black"}
+                visible={scale == "xs" ? false : true}
             />
         </>
     );
