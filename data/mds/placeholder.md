@@ -1,4 +1,4 @@
-# Placeholder
+# Placeholder Title
 
 ## Introduction
 
@@ -11,13 +11,14 @@ Donec consequat sem id accumsan tristique. Vivamus dignissim gravida neque, non 
 Fusce felis felis, eleifend quis laoreet vitae, porta quis lorem. Duis a volutpat nunc. Nunc mauris leo, scelerisque et tempus in, eleifend vitae nisl. Morbi vehicula laoreet sapien. Donec sed nisi pretium metus rhoncus mollis et vitae odio. Pellentesque volutpat rhoncus ligula. Sed fringilla vulputate leo, vitae pulvinar quam auctor vitae.
 
 Donec arcu magna, tempor non tristique id, facilisis ac velit. Sed ac laoreet magna. Phasellus et consequat eros. Duis sit amet aliquet erat. Sed elementum at dolor ut ultrices. Etiam vehicula pretium nisi. Nam blandit ornare porttitor. Vestibulum ullamcorper nunc non semper accumsan. Phasellus varius velit leo, vitae ultrices orci dictum vel. Vivamus ut tortor pellentesque, dapibus erat quis, blandit lorem.
+
 ## Context
 
-Praesent a orci nec sapien suscipit lacinia. Nulla facilisi. Phasellus iaculis orci vitae eros euismod, nec dictum erat dictum. 
+Praesent a orci nec sapien suscipit lacinia. Nulla facilisi. Phasellus iaculis orci vitae eros euismod, nec dictum erat dictum.
 
-- Point one: Pellentesque habitant morbi tristique.
-- Point two: Cras lacinia est vitae mi fermentum posuere.
-- Point three: Fusce nec nunc sed leo efficitur tincidunt.
+-   Point one: Pellentesque habitant morbi tristique.
+-   Point two: Cras lacinia est vitae mi fermentum posuere.
+-   Point three: Fusce nec nunc sed leo efficitur tincidunt.
 
 ## Reflection
 
