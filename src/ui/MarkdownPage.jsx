@@ -4,7 +4,7 @@ import { CircularProgress, Container, Typography } from "@mui/material";
 
 import { useTheme } from "@mui/material";
 
-export default function MarkdownPage({ path }) {
+export default function MarkdownPage({ title, path }) {
     const theme = useTheme();
     const [content, setContent] = useState(null);
 
@@ -18,15 +18,14 @@ export default function MarkdownPage({ path }) {
 
     return (
         <>
+            <Typography
+                variant="h2"
+                sx={{ mr: "20%", mb: theme.bannerH }}
+            >
+                {title}
+            </Typography>
             <ReactMarkdown
                 components={{
-                    h1: ({ node, ...props }) => (
-                        <Typography
-                            variant="h2"
-                            {...props}
-                            sx={{ mr: "20%", mb: theme.bannerH }}
-                        />
-                    ),
                     h2: ({ node, ...props }) => (
                         <Typography
                             variant="h4"

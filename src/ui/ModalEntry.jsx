@@ -1,4 +1,4 @@
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
 import { useTheme } from "@mui/material/styles";
 
@@ -116,66 +116,117 @@ export default function ModalEntry() {
                     >
                         <LeftIcon />
                     </IconButton>
+
+                    {/* Page  ------------------------------------------------ */}
                     <Box
                         sx={{
-                            backgroundColor: theme.colors.white.main,
-                            border: "1px solid",
-                            borderColor: theme.colors.grey.main,
-                            height: "100%",
-                            width: "50%",
-                        }}
-                    >
-                        <img
-                            src={page.img.path}
-                            alt={page.title}
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                            }}
-                        />
-                    </Box>
-                    <Box
-                        sx={{
-                            border: "1px solid",
-                            borderColor: theme.colors.grey.main,
-                            backgroundColor: theme.colors.black.main,
-                            width: "50%",
-                            position: "relative",
                             display: "flex",
-                            flexDirection: "column",
+                            flex: 1,
+                            flexDirection: "row",
                             height: "100%",
+                            maxHeight: "100%",
+                            position: "relative",
+                            border: "1px solid",
+                            borderColor: theme.colors.grey.main,
                         }}
                     >
-                        <Box
+                        {/* Closing icon .................................... */}
+                        <IconButton
                             sx={{
-                                flex: 1,
-                                overflowY: "auto",
-                                p: 4,
-                                color: theme.colors.black.contrastText,
-                                pointerEvents: "auto",
+                                position: "absolute",
+                                top: 0,
+                                right: 0,
+                                m: theme.btnH,
+                                borderRadius: theme.btnH,
+                                height: theme.bannerH,
+                                width: theme.bannerH,
+                                zIndex: 100,
+                            }}
+                            onClick={() => {
+                                useStore.setState({ selectedId: null });
                             }}
                         >
-                            <IconButton
+                            <CloseIcon />
+                        </IconButton>
+
+                        {page.video && (
+                            <Box
                                 sx={{
-                                    position: "absolute",
-                                    top: 0,
-                                    right: 0,
-                                    m: theme.btnH,
-                                    borderRadius: theme.btnH,
-                                    height: theme.bannerH,
-                                    width: theme.bannerH,
-                                }}
-                                onClick={() => {
-                                    useStore.setState({ selectedId: null });
-                                    console.log("off-click");
+                                    width: "100%",
+                                    height: "100%",
+                                    backgroundColor: "black", // better for videos
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
                                 }}
                             >
-                                <CloseIcon />
-                            </IconButton>
+                                <video
+                                    src={page.video.path}
+                                    controls
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "contain",
+                                        pointerEvents: "auto",
+                                        cursor: "none",
+                                    }}
+                                >
+                                    Your browser does not support the video tag.
+                                </video>
+                            </Box>
+                        )}
 
-                            <MarkdownPage path={`data/mds/${page.text}.md`} />
-                        </Box>
+                        {page.img && !page.video && (
+                            <>
+                                <Box
+                                    sx={{
+                                        backgroundColor:
+                                            theme.colors.white.main,
+                                        borderRight: "1px solid",
+                                        borderColor: theme.colors.grey.main,
+                                        height: "100%",
+                                        width: "50%",
+                                    }}
+                                >
+                                    <img
+                                        src={page.img.path}
+                                        alt={page.title}
+                                        style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",
+                                        }}
+                                    />
+                                </Box>
+                                <Box
+                                    sx={{
+                                        backgroundColor:
+                                            theme.colors.black.main,
+                                        width: "50%",
+                                        position: "relative",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        height: "100%",
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            flex: 1,
+                                            overflowY: "auto",
+                                            p: 4,
+                                            color: theme.colors.black
+                                                .contrastText,
+                                            pointerEvents: "auto",
+                                        }}
+                                    >
+                                        <MarkdownPage
+                                            title={page.title}
+                                            path={`data/mds/${page.text}.md`}
+                                        />
+                                    </Box>
+                                </Box>
+                            </>
+                        )}
                     </Box>
 
                     <IconButton

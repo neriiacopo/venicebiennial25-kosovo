@@ -1,5 +1,3 @@
-# Placeholder Title
-
 ## Introduction
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eros lacus, finibus sed tincidunt ac, malesuada ut dolor. Etiam vehicula sit amet risus hendrerit tincidunt. Quisque feugiat eu augue vel fringilla. Nullam hendrerit mauris ut erat vulputate sagittis. Aliquam porttitor augue dapibus erat convallis hendrerit. Ut molestie tincidunt leo, vitae varius justo sollicitudin id. Maecenas suscipit nunc risus, quis pretium libero dignissim nec.

@@ -67,10 +67,10 @@ export default function SceneContent() {
                         [
                             { x: [0.3, 0.7], y: [0.3, 0.7] },
                             { x: [0.3, 0.7], y: [0.2, 0.8] },
-                            { x: [0.3, 0.7], y: [0.3, 0.7] },
+                            { x: [0.1, 0.9], y: [0.35, 0.55] },
                         ][i]
                     }
-                    size={[20, 10, 20][i] * scaleFactors.current.values[i]}
+                    size={[20, 20, 20][i] * scaleFactors.current.values[i]}
                 />
             ))}
 

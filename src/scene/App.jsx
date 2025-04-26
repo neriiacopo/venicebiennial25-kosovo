@@ -5,6 +5,8 @@ import { Text } from "@react-three/drei";
 import SceneContent from "./SceneContent";
 import CameraManager from "./CameraManager";
 
+import FxASCII from "./FxASCII.jsx";
+
 export default function App() {
     return (
         <>
@@ -20,6 +22,7 @@ export default function App() {
                     <SceneContent />
                     <CameraManager />
                 </group>
+                {/* <FxASCII /> */}
             </Canvas>
         </>
     );

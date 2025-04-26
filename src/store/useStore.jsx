@@ -3,7 +3,7 @@ import { create } from "zustand";
 export let useStore = create((set, get) => ({
     narratives: [],
     db: [],
-    selectedId: "",
+    selectedId: null,
     scales: ["xs", "m", "xl"],
     scale: "m",
     cameraSettings: [],
@@ -21,7 +21,7 @@ export let useStore = create((set, get) => ({
 
     cameraOptions: {
         xl: {
-            fov: 100,
+            fov: 80,
             rot: false,
             zoom: false,
             pan: false,

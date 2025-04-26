@@ -8,6 +8,7 @@ export default function CameraController() {
     const cameraSettings = useStore((state) => state.cameraSettings);
     const cameraLock = useStore((state) => state.cameraLock);
     const selectedId = useStore((state) => state.selectedId);
+    const scale = useStore((state) => state.scale);
 
     const cameraSpeed = useRef({ value: 0 });
 
@@ -68,9 +69,9 @@ export default function CameraController() {
     }, [selectedId]);
 
     useEffect(() => {
-        // targetPan.current = { x: 0, y: 0 };
-        // targetRotation.current = { x: 0, y: 0 };
-    }, [cameraLock]);
+        targetPan.current = { x: 0, y: 0 };
+        targetRotation.current = { x: 0, y: 0 };
+    }, [scale]);
 
     // Animate camera movements based on mouse with inertia
     useFrame(() => {

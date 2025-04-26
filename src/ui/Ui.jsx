@@ -13,7 +13,7 @@ import ModalEntry from "./ModalEntry";
 
 export default function Ui() {
     const theme = useTheme();
-
+    const fadeRef = useRef(null);
     const selectedId = useStore((state) => state.selectedId);
 
     return (
@@ -59,7 +59,11 @@ export default function Ui() {
                 {/* Bottom  */}
                 <BannerStates />
             </Box>
+
+            {/* Faded background for modal */}
             <Box
+                ref={fadeRef}
+                onClick={() => useStore.setState({ selectedId: null })}
                 sx={{
                     top: 0,
                     left: 0,
@@ -67,8 +71,8 @@ export default function Ui() {
                     width: "100vw",
                     height: "100vh",
                     zIndex: 1,
-                    pointerEvents: "none",
-                    opacity: selectedId ? 0.8 : 0,
+                    pointerEvents: !selectedId != null ? "none" : "auto",
+                    opacity: selectedId != null ? 0.8 : 0,
                     backgroundColor: theme.colors.white.main,
                     transition: "opacity 0.5s ease-in-out",
                 }}
