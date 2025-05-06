@@ -2,7 +2,6 @@
 
 Hi! I'm your first Markdown file in **StackEdit**. If you want to learn about StackEdit, you can read me. If you want to play with Markdown, you can edit me. Once you have finished with me, you can sf new files by opening the **file explorer** on the left corner of the navigation bar.
 
-Heading
 
 
 # Files
@@ -25,7 +24,7 @@ You can rename the current file by clicking the file name in the navigation bar 
 
 You can delete the current file by clicking the **Remove** button in the file explorer. The file will be moved into the **Trash** folder and automatically deleted after 7 days of inactivity.
 
-## Export a file
+###### Export a file
 
 You can export the current file by clicking **Export to disk** in the menu. You can choose to export the file as plain Markdown, as HTML using a Handlebars template or as a PDF.
 
@@ -144,5 +143,5 @@ B --> D{Rhombus}
 C --> D
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk5MjkyNjYwXX0=
+eyJoaXN0b3J5IjpbLTU4MTI0NzIwOF19
 -->
