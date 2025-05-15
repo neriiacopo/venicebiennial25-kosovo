@@ -11,6 +11,8 @@ export let useStore = create((set, get) => ({
     imgHover: false,
     activeNarratives: [],
 
+    globe: { radius: 100, center: [0, 100, 0], texture: "./countries_inv.jpg" },
+
     setScale: (scale) => {
         const options = get().cameraOptions[scale];
         set({
@@ -21,7 +23,8 @@ export let useStore = create((set, get) => ({
 
     cameraOptions: {
         xl: {
-            fov: 80,
+            fov: 40,
+            type: "trackball",
             rot: false,
             zoom: false,
             pan: false,
@@ -29,6 +32,7 @@ export let useStore = create((set, get) => ({
         },
         m: {
             fov: 50,
+            type: "flyover",
             rot: false,
             zoom: false,
             pan: true,
@@ -36,10 +40,22 @@ export let useStore = create((set, get) => ({
         },
         xs: {
             fov: 100,
+            type: "firstPerson",
             rot: true,
             zoom: false,
             pan: false,
             position: [0, 0, 140],
         },
+    },
+
+    // DEV stuff
+
+    spriteBw: true,
+    updateFov: () => {
+        const scale = get().scale;
+        const options = get().cameraOptions[scale];
+        set({
+            cameraSettings: options,
+        });
     },
 }));

@@ -9,6 +9,7 @@ export default function Cursor() {
     const [hover, setHovering] = useState(false);
     const hoverClasses = useStore.getState().hoverClasses;
     const imgHover = useStore((state) => state.imgHover);
+    const cameraLock = useStore((state) => state.cameraLock);
 
     useEffect(() => {
         const moveCursor = (e) => {
@@ -28,22 +29,11 @@ export default function Cursor() {
         };
     }, []);
 
+    useEffect(() => {
+        useStore.setState({ cameraLock: hover || imgHover });
+    }, [hover, imgHover]);
+
     return (
-        // <div
-        //     style={{
-        //         position: "fixed",
-        //         top: position.y,
-        //         left: position.x,
-        //         width: `${16 + hover * 10}px`,
-        //         height: `${16 + hover * 10}px`,
-        //         backdropFilter: "invert(1)",
-        //         borderRadius: "50%",
-        //         pointerEvents: "none",
-        //         transform: "translate(-50%, -50%)",
-        //         zIndex: 9999,
-        //         transition: "all 150ms ease, top 0ms, left 0ms",
-        //     }}
-        // />
         <div
             style={{
                 position: "fixed",

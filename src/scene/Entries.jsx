@@ -1,8 +1,13 @@
 import * as THREE from "three";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { getIndicesInUvDomain, seededShuffle } from "../utils.js";
 import { useStore } from "../store/useStore.jsx";
+
+import { shaderMaterial } from "@react-three/drei";
+import { extend } from "@react-three/fiber";
+
+import GrayscaleSpriteMaterial from "./GrayscaleSpriteMaterial";
 
 export default function Entries({
     data = [],
@@ -13,8 +18,9 @@ export default function Entries({
 }) {
     const seed = useMemo(() => Math.floor(Math.random() * 1000), []);
     const geometry = useStore((state) => state.uvmap);
-    const activeScale = useStore((state) => state.scale);
     const spriteRefs = useRef([]);
+
+    const spriteBw = useStore((state) => state.spriteBw);
 
     // Select vertex indices using UV domain
     const idx = useMemo(() => {
@@ -44,14 +50,21 @@ export default function Entries({
         }
     });
 
-    // Render sprites only when geometry and data are valid
+    const [hovereds, setHovereds] = useState([]);
+
+    useEffect(() => {
+        if (data?.length) {
+            setHovereds(new Array(data.length).fill(false));
+        }
+    }, [data.length]);
+
     return (
         <>
             {geometry &&
-                // activeScale === scale &&
                 idx?.length === data.length &&
                 data.map((obj, i) => (
                     <sprite
+                        rotation={[Math.PI / 2, 0, 0]}
                         key={i}
                         ref={(ref) => (spriteRefs.current[i] = ref)}
                         scale={[size * (obj.img?.aspectRatio || 1), size, 1]}
@@ -61,25 +74,35 @@ export default function Entries({
                         }}
                         onPointerOver={(e) => {
                             e.stopPropagation();
-                            // e.object.material.color.set("rgba(255,255,255,1)"); // Change color on hover
-
                             useStore.setState({ imgHover: true });
+                            const newHovereds = [...hovereds];
+                            newHovereds[i] = true;
+                            setHovereds(newHovereds);
                         }}
                         onPointerOut={(e) => {
                             e.stopPropagation();
-                            // e.object.material.color.set(color); // Reset color on hover out
-
                             useStore.setState({ imgHover: false });
+                            const newHovereds = [...hovereds];
+                            newHovereds[i] = false;
+                            setHovereds(newHovereds);
                         }}
                     >
-                        <spriteMaterial
-                            map={obj.img?.texture}
-                            // color={color}
-                            transparent
-                            sizeAttenuation
-                            depthTest={false}
-                            depthWrite={false}
-                        />
+                        {!spriteBw ? (
+                            <spriteMaterial
+                                map={obj.img?.texture}
+                                transparent
+                                depthTest={false}
+                                depthWrite={false}
+                            />
+                        ) : (
+                            <grayscaleSpriteMaterial
+                                uTexture={obj.img?.texture}
+                                uGrayscale={hovereds[i] ? 0.0 : 1.0}
+                                transparent
+                                depthTest={false}
+                                depthWrite={false}
+                            />
+                        )}
                     </sprite>
                 ))}
         </>

@@ -3,6 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import { useStore } from "../store/useStore.jsx";
 import gsap from "gsap";
 
+import { latLonToXYZ } from "../utils.js";
+
+const pristina = { lat: 42.6026, lon: 20.9029 };
+
 export default function CameraController() {
     const { camera, pointer } = useThree();
     const cameraSettings = useStore((state) => state.cameraSettings);
@@ -10,12 +14,16 @@ export default function CameraController() {
     const selectedId = useStore((state) => state.selectedId);
     const scale = useStore((state) => state.scale);
 
+    const globe = useStore((state) => state.globe); // globe or map
+
     const cameraSpeed = useRef({ value: 0 });
 
     const targetRotation = useRef({ x: 0, y: 0 });
     const targetPan = useRef({ x: 0, y: 0 });
+    const targetAngle = useRef(pristina);
+    const currentAngle = useRef({ lon: 0, lat: 0 });
 
-    // Fixed camera position
+    // Initial camera position
     useEffect(() => {
         camera.position.set(0, 0, 100);
         camera.lookAt(0, 0, 0);
@@ -27,7 +35,8 @@ export default function CameraController() {
         targetRotation.current = { x: 0, y: 0 };
         if (cameraSettings.fov !== undefined) {
             gsap.to(camera.position, {
-                duration: 1,
+                duration: 2,
+                ease: "power2.out",
                 x: cameraSettings.position[0],
                 y: cameraSettings.position[1],
                 z: cameraSettings.position[2],
@@ -36,7 +45,7 @@ export default function CameraController() {
                 },
             });
             gsap.to(camera, {
-                duration: 1,
+                duration: 2,
                 fov: cameraSettings.fov,
                 onUpdate: () => {
                     camera.updateProjectionMatrix();
@@ -54,9 +63,16 @@ export default function CameraController() {
         }
     }, [cameraSettings]);
 
+    // Reset camera position on scale change
+    useEffect(() => {
+        targetPan.current = { x: 0, y: 0 };
+        targetRotation.current = { x: 0, y: 0 };
+        currentAngle.current = { lon: 0, lat: 0 };
+    }, [scale]);
+
+    // Reset speed on selection
     useEffect(() => {
         if (!selectedId) {
-            console.log("test");
             // Speed
             cameraSpeed.current.value = 0;
             gsap.to(cameraSpeed.current, {
@@ -68,66 +84,170 @@ export default function CameraController() {
         }
     }, [selectedId]);
 
-    useEffect(() => {
-        targetPan.current = { x: 0, y: 0 };
-        targetRotation.current = { x: 0, y: 0 };
-    }, [scale]);
+    // Slow down on hover
+    // useEffect(() => {
+    //     if (cameraLock) {
+    //         gsap.to(cameraSpeed.current, {
+    //             value: 0.01,
+    //             duration: 0.5,
+    //             ease: "power2.out",
+    //             onUpdate: () => {},
+    //         });
+    //     } else {
+    //         gsap.to(cameraSpeed.current, {
+    //             value: 1,
+    //             duration: 1,
+    //             ease: "power2.in",
+    //             onUpdate: () => {},
+    //         });
+    //     }
+    // }, [cameraLock]);
 
     // Animate camera movements based on mouse with inertia
-    useFrame(() => {
+    useFrame((state, delta) => {
         // Limited first person view - rotation
-        if (cameraLock === false) {
-            if (cameraSettings.rot) {
-                // target rotation range in radians
-                const maxX = 0.2; // pitch (up/down)
-                const maxY = 0.5; // yaw (left/right)
+        if (cameraSettings.type === "firstPerson") {
+            // target rotation range in radians
+            const maxX = 0.2;
+            const maxY = 0.5;
 
-                const targetX = pointer.y * maxX;
-                const targetY = pointer.x * maxY;
+            const targetX = pointer.y * maxX;
+            const targetY = pointer.x * maxY;
 
-                // Smoothly interpolate (inertia)
-                targetRotation.current.x +=
-                    (targetX - targetRotation.current.x) *
-                    0.05 *
-                    cameraSpeed.current.value;
-                targetRotation.current.y +=
-                    (targetY - targetRotation.current.y) *
-                    0.05 *
-                    cameraSpeed.current.value;
+            // Smoothly interpolate (inertia)
+            targetRotation.current.x +=
+                (targetX - targetRotation.current.x) *
+                0.05 *
+                cameraSpeed.current.value;
+            targetRotation.current.y +=
+                (targetY - targetRotation.current.y) *
+                0.05 *
+                cameraSpeed.current.value;
 
-                // Apply rotation
-                camera.rotation.x = targetRotation.current.x;
-                camera.rotation.y = -targetRotation.current.y;
-            }
+            // Apply rotation
+            camera.rotation.x = targetRotation.current.x;
+            camera.rotation.y = -targetRotation.current.y;
+        }
 
-            // Constrained flying control - pan
-            if (cameraSettings.pan) {
-                const maxPanX = 100;
-                const maxPanY = 100;
+        // Constrained flying control - pan
+        if (cameraSettings.type === "flyover") {
+            const maxPanX = 100;
+            const maxPanY = 100;
 
-                // Calculate new pan target
-                const targetX = pointer.x * maxPanX;
-                const targetY = pointer.y * maxPanY;
+            // Calculate new pan target
+            const targetX = pointer.x * maxPanX;
+            const targetY = pointer.y * maxPanY;
 
-                // Lerp to new pan values (inertia)
-                targetPan.current.x +=
-                    (targetX - targetPan.current.x) *
+            // Lerp to new pan values (inertia)
+            targetPan.current.x +=
+                (targetX - targetPan.current.x) *
+                0.02 *
+                cameraSpeed.current.value;
+            targetPan.current.y +=
+                (targetY - targetPan.current.y) *
+                0.02 *
+                cameraSpeed.current.value;
+
+            // Apply to camera position while keeping Z fixed
+            camera.position.set(
+                targetPan.current.x,
+                targetPan.current.y,
+                camera.position.z
+            );
+        }
+
+        // Trackball control - rotation
+        // if (cameraSettings.type === "trackball") {
+        //     // target rotation range in radians
+        //     const maxX = 0.5;
+        //     const maxY = 0.5;
+
+        //     const radius = globe.radius * 2;
+        //     const pivot = {
+        //         x: globe.center[0],
+        //         y: globe.center[2],
+        //         z: -globe.center[1],
+        //     };
+
+        //     const targetX = -pointer.x * maxX;
+        //     const targetY = pointer.y * maxY;
+
+        //     targetAngle.current.cos +=
+        //         targetX * 0.1 * cameraSpeed.current.value;
+
+        //     targetAngle.current.sin +=
+        //         targetY * 0.1 * cameraSpeed.current.value;
+
+        //     // Clamp the angle to prevent flipping
+        //     targetAngle.current.sin = Math.max(
+        //         -Math.PI / 4,
+        //         Math.min(Math.PI / 2, targetAngle.current.sin)
+        //     );
+
+        //     // Calculate the new camera position based on the angle
+        //     camera.position.x =
+        //         pivot.x +
+        //         radius *
+        //             Math.cos(targetAngle.current.sin) *
+        //             Math.cos(targetAngle.current.cos);
+        //     camera.position.y =
+        //         pivot.y + radius * Math.sin(targetAngle.current.sin);
+
+        //     camera.position.z =
+        //         pivot.z +
+        //         radius *
+        //             Math.cos(targetAngle.current.sin) *
+        //             Math.sin(targetAngle.current.cos);
+
+        //     camera.lookAt(pivot.x, pivot.y, pivot.z);
+        // }
+        if (cameraSettings.type === "trackball") {
+            const pivot = {
+                x: globe.center[0],
+                y: globe.center[2],
+                z: -globe.center[1],
+            };
+            const radius = globe.radius * 1.8;
+
+            const targetLon = pristina.lon;
+            const targetLat = pristina.lat;
+
+            const targetX = -pointer.x;
+            const targetY = pointer.y;
+
+            // Smoothly interpolate (inertia)
+            currentAngle.current.lon +=
+                (targetLon - currentAngle.current.lon) *
                     0.02 *
-                    cameraSpeed.current.value;
-                targetPan.current.y +=
-                    (targetY - targetPan.current.y) *
-                    0.02 *
-                    cameraSpeed.current.value;
+                    cameraSpeed.current.value -
+                targetX * 0.1 * cameraSpeed.current.value;
 
-                // Apply to camera position while keeping Z fixed
-                camera.position.set(
-                    targetPan.current.x,
-                    targetPan.current.y,
-                    camera.position.z
-                );
-            }
+            currentAngle.current.lat +=
+                (targetLat - currentAngle.current.lat) *
+                    0.02 *
+                    cameraSpeed.current.value +
+                targetY * 0.1 * cameraSpeed.current.value;
+
+            const destination = [
+                pivot.x +
+                    radius *
+                        Math.cos(degToRad(currentAngle.current.lat)) *
+                        Math.cos(degToRad(90 - currentAngle.current.lon)),
+                pivot.y + radius * Math.sin(degToRad(currentAngle.current.lat)),
+                pivot.z +
+                    radius *
+                        Math.cos(degToRad(currentAngle.current.lat)) *
+                        Math.sin(degToRad(90 - currentAngle.current.lon)),
+            ];
+
+            camera.position.set(destination[0], destination[1], destination[2]);
+            camera.lookAt(0, 0, -100);
         }
     });
 
     return null;
+}
+
+function degToRad(degrees) {
+    return degrees * (Math.PI / 180);
 }

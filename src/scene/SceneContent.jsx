@@ -1,16 +1,21 @@
 import { useEffect, useState, useRef } from "react";
+import { AsciiRenderer } from "@react-three/drei";
 import gsap from "gsap";
 
 import Grid from "./GridArrow.jsx";
-import Globe from "./Globe.jsx";
+// import Globe from "./Globe.jsx";
+import Globe from "./GlobeNoise.jsx";
 import UVMap from "./UVMap.jsx";
 import Entries from "./Entries.jsx";
+import VerticalCircle from "./VerticalCircle.jsx";
+import Trails from "./Trails.jsx";
+import DevControllers from "./DevControllers.jsx";
 
 import { useStore } from "../store/useStore.jsx";
 
 export default function SceneContent() {
-    const scale = useStore((state) => state.scale); // get scale from store
-    const globeR = 100;
+    const scale = useStore((state) => state.scale);
+    const globe = useStore((state) => state.globe); // globe or map
 
     const db = useStore((state) => state.db);
     const scales = useStore((state) => state.scales);
@@ -44,18 +49,21 @@ export default function SceneContent() {
 
     return (
         <>
-            <Grid
-                u={u}
-                r={globeR}
-            />
-            <UVMap
-                u={u}
-                r={globeR}
-            />
-            <Globe
-                u={u}
-                r={globeR}
-            />
+            <DevControllers />
+            <Grid u={u} />
+            <UVMap u={u} />
+            <Globe u={u} />
+            {/* <Trails u={u} /> */}
+
+            {scale == "xs" && (
+                <VerticalCircle
+                    r={globe.radius * 2}
+                    position={[0, globe.radius, 0]}
+                    scale={2 - u}
+                    lineWidth={u}
+                    color={"black"}
+                />
+            )}
 
             {scales.map((scale, i) => (
                 <Entries

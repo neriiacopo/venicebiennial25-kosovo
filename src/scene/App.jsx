@@ -1,7 +1,5 @@
 import React from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Text } from "@react-three/drei";
-
 import SceneContent from "./SceneContent";
 import CameraManager from "./CameraManager";
 

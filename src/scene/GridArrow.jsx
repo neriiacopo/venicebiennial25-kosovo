@@ -4,9 +4,10 @@ import { useMemo, useRef } from "react";
 
 import { latLonToXYZ, mirrorPt, interpolateTriple } from "../utils.js";
 
+import { useStore } from "../store/useStore.jsx";
+
 export default function GridArrow({
     u,
-    r,
     res = { x: 36, y: 18 },
     width = 360,
     height = 180,
@@ -15,6 +16,7 @@ export default function GridArrow({
 }) {
     const ref = useRef();
     const lineCount = useMemo(() => (res.x + 1) * (res.y + 1) * 4, [res]);
+    const r = useStore((state) => state.globe.radius);
 
     // Allocate a single geometry for all line segments
     const geometry = useMemo(() => {

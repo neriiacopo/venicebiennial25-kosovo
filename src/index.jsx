@@ -14,7 +14,7 @@ const root = ReactDOM.createRoot(document.querySelector("#root"));
 root.render(<AppWrapper />);
 
 function AppWrapper() {
-    const [ready, setReady] = useState(false);
+    const [ready, setReady] = useState(true);
     const setScale = useStore((state) => state.setScale);
 
     useEffect(() => {
@@ -99,16 +99,34 @@ function AppWrapper() {
                 })
             );
 
-            console.log(processedData);
             useStore.setState({
                 db: processedData,
                 narratives: data.columns,
             });
 
             setScale("m");
-            setReady(true);
+
+            // setReady(true);
         }
 
+        // Template call for whitestork mapping
+        async function getTrail() {
+            const url = "trail_test.json";
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+
+                const json = await response.json();
+                useStore.setState({ trail: json.data });
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
+
+        getTrail();
         Init();
     }, []);
 
