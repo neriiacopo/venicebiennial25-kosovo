@@ -1,0 +1,28 @@
+@font-face {
+    font-family: "ABCMonumentGrotesk-Cue-6";
+    src: url("./assets/fonts/ABCMonumentGrotesk-Cue-6-Regular.woff")
+        format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "ABCMonumentGrotesk-Cue-7";
+    src: url("./assets/fonts/ABCMonumentGrotesk-Cue-7-Regular.woff")
+        format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "ABCMonumentGrotesk-Cue-8";
+    src: url("./assets/fonts/ABCMonumentGrotesk-Cue-8-Regular.woff")
+        format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "ABCMonumentGrotesk-Cue-9";
+    src: url("./assets/fonts/ABCMonumentGrotesk-Cue-9-Regular.woff")
+        format("woff");
+    font-weight: normal;
+    font-style: normal;
+}

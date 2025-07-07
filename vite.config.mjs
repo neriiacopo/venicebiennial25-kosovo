@@ -5,11 +5,13 @@ import topLevelAwait from "vite-plugin-top-level-await";
 const isCodeSandbox =
     "SANDBOX_URL" in process.env || "CODESANDBOX_HOST" in process.env;
 
+const isCloudflare = process.env.CLOUDFLARE_PAGES === "true";
+
 export default defineConfig({
     plugins: [react(), topLevelAwait()],
     root: "src",
     publicDir: "public",
-    base: "/venicebiennial25-kosovo/",
+    base: isCloudflare ? "/" : "/venicebiennial25-kosovo/",
     server: {
         host: true,
         open: !isCodeSandbox,

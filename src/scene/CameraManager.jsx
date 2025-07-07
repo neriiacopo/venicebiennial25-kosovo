@@ -105,6 +105,7 @@ export default function CameraController() {
 
     // Animate camera movements based on mouse with inertia
     useFrame((state, delta) => {
+        if (cameraLock) return; // Skip updates if camera is locked
         // Limited first person view - rotation
         if (cameraSettings.type === "firstPerson") {
             // target rotation range in radians
@@ -156,51 +157,6 @@ export default function CameraController() {
             );
         }
 
-        // Trackball control - rotation
-        // if (cameraSettings.type === "trackball") {
-        //     // target rotation range in radians
-        //     const maxX = 0.5;
-        //     const maxY = 0.5;
-
-        //     const radius = globe.radius * 2;
-        //     const pivot = {
-        //         x: globe.center[0],
-        //         y: globe.center[2],
-        //         z: -globe.center[1],
-        //     };
-
-        //     const targetX = -pointer.x * maxX;
-        //     const targetY = pointer.y * maxY;
-
-        //     targetAngle.current.cos +=
-        //         targetX * 0.1 * cameraSpeed.current.value;
-
-        //     targetAngle.current.sin +=
-        //         targetY * 0.1 * cameraSpeed.current.value;
-
-        //     // Clamp the angle to prevent flipping
-        //     targetAngle.current.sin = Math.max(
-        //         -Math.PI / 4,
-        //         Math.min(Math.PI / 2, targetAngle.current.sin)
-        //     );
-
-        //     // Calculate the new camera position based on the angle
-        //     camera.position.x =
-        //         pivot.x +
-        //         radius *
-        //             Math.cos(targetAngle.current.sin) *
-        //             Math.cos(targetAngle.current.cos);
-        //     camera.position.y =
-        //         pivot.y + radius * Math.sin(targetAngle.current.sin);
-
-        //     camera.position.z =
-        //         pivot.z +
-        //         radius *
-        //             Math.cos(targetAngle.current.sin) *
-        //             Math.sin(targetAngle.current.cos);
-
-        //     camera.lookAt(pivot.x, pivot.y, pivot.z);
-        // }
         if (cameraSettings.type === "trackball") {
             const pivot = {
                 x: globe.center[0],

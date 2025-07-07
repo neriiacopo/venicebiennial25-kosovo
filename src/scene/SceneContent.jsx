@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react";
+import { Suspense } from "react";
 import { AsciiRenderer } from "@react-three/drei";
 import gsap from "gsap";
 
 import Grid from "./GridArrow.jsx";
 // import Globe from "./Globe.jsx";
-import Globe from "./GlobeNoise.jsx";
+import Globe from "./Globe.jsx";
 import UVMap from "./UVMap.jsx";
 import Entries from "./Entries.jsx";
 import VerticalCircle from "./VerticalCircle.jsx";
@@ -49,13 +50,13 @@ export default function SceneContent() {
 
     return (
         <>
-            <DevControllers />
+            {/* <DevControllers /> */}
             <Grid u={u} />
             <UVMap u={u} />
             <Globe u={u} />
             {/* <Trails u={u} /> */}
 
-            {scale == "xs" && (
+            {/* {scale == "xs" && (
                 <VerticalCircle
                     r={globe.radius * 2}
                     position={[0, globe.radius, 0]}
@@ -63,24 +64,24 @@ export default function SceneContent() {
                     lineWidth={u}
                     color={"black"}
                 />
-            )}
-
-            {scales.map((scale, i) => (
-                <Entries
-                    key={i}
-                    data={db.filter((d) => d.section === scale)}
-                    scale={scale}
-                    color={["orange", "red", "yellow"][i]}
-                    uv={
-                        [
-                            { x: [0.3, 0.7], y: [0.3, 0.7] },
-                            { x: [0.3, 0.7], y: [0.2, 0.8] },
-                            { x: [0.1, 0.9], y: [0.35, 0.55] },
-                        ][i]
-                    }
-                    size={[20, 20, 20][i] * scaleFactors.current.values[i]}
-                />
-            ))}
+            )} */}
+            {db?.length &&
+                scales.map((scale, i) => (
+                    <Entries
+                        key={i}
+                        data={db.filter((d) => d.section === scale)}
+                        scale={scale}
+                        color={["orange", "red", "yellow"][i]}
+                        uv={
+                            [
+                                { x: [0.3, 0.7], y: [0.3, 0.7] },
+                                { x: [0.3, 0.7], y: [0.2, 0.8] },
+                                { x: [0.1, 0.9], y: [0.35, 0.55] },
+                            ][i]
+                        }
+                        size={[20, 20, 20][i] * scaleFactors.current.values[i]}
+                    />
+                ))}
 
             <ambientLight />
             <pointLight position={[10, 10, 10]} />

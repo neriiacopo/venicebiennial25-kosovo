@@ -20,7 +20,11 @@ export default function MarkdownPage({ title, path }) {
         <>
             <Typography
                 variant="h2"
-                sx={{ mr: "20%", mb: theme.bannerH }}
+                sx={{
+                    pt: "20vh",
+                    mb: theme.bannerH,
+                    textTransform: "uppercase",
+                }}
             >
                 {title}
             </Typography>
@@ -30,13 +34,25 @@ export default function MarkdownPage({ title, path }) {
                         <Typography
                             variant="h4"
                             {...props}
-                            sx={{ mr: "20%", mt: theme.bannerH }}
+                            sx={{ mt: theme.bannerH }}
+                        />
+                    ),
+
+                    strong: ({ node, ...props }) => (
+                        <Typography
+                            component="span"
+                            sx={{
+                                fontWeight: "bold",
+                                textDecoration: "underline",
+                                // mr: 1,
+                            }}
+                            {...props}
                         />
                     ),
                     p: ({ node, ...props }) => (
                         <Typography
                             {...props}
-                            sx={{ textAlign: "justify", m: "1em 0" }}
+                            sx={{ textAlign: "left", m: "1em 0" }}
                         />
                     ),
                 }}

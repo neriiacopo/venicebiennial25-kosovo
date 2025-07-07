@@ -1,6 +1,15 @@
 import { createTheme } from "@mui/material/styles";
 
+import { glowTextFx } from "../utils";
+
 import { useStore } from "../store/useStore";
+
+const fonts = {
+    p: "ABCMonumentGrotesk-Cue-7,Arial, sans-serif",
+    title: "ABCMonumentGrotesk-Cue-8,Arial, sans-serif",
+    button: "ABCMonumentGrotesk-Cue-9,Arial, sans-serif",
+    navButton: "ABCMonumentGrotesk-Cue-7,Arial, sans-serif",
+};
 
 const colors = {
     black: {
@@ -11,49 +20,63 @@ const colors = {
     },
     white: {
         main: "#f5f5f5",
-        light: "#ffffff",
+        lightest: "#ffffff",
+        light: "#f2f2f2",
         darker: "#e0e0e0",
         contrastText: "#111111",
     },
     grey: {
+        lightest: "#f2f2f2",
+        light: "#999999",
         main: "#808080",
+        darker: "#666666",
+        darkest: "#333333",
     },
 };
 
 const bannerH = "5vh";
+const xM = "2.5vw";
 
 // Main dims and colors
 let theme = createTheme({
+    fonts,
+    xM,
     modalEntryW: "50vw",
     btnH: "2.5vh",
     navW: "10vw",
     bannerH,
     typography: {
-        fontFamily: "Work Sans",
+        fontFamily: fonts.p,
     },
     colors,
 
     components: {
+        clickable: {},
         MuiToggleButton: {
             styleOverrides: {
                 root: {
+                    textShadow: glowTextFx("2px", colors.grey.light),
+                    p: 0,
+                    m: 0,
+                    fontSize: "2rem",
                     pointerEvents: "auto",
                     cursor: "none",
-                    textTransform: "lowercase",
-                    backgroundColor: colors.white.main,
+                    textTransform: "uppercase",
                     color: colors.black.main,
-                    border: "1px solid",
-                    borderColor: colors.grey.main,
+                    border: "none",
+                    backgroundColor: "transparent",
+                    // opacity: 0.5,
 
                     "&:hover": {
-                        backgroundColor: colors.white.darker,
+                        backgroundColor: "transparent",
+                        // textShadow: glowTextFx("5px", colors.grey.light),
                     },
                     "&.Mui-selected": {
-                        backgroundColor: colors.black.main,
-                        color: colors.black.contrastText,
+                        // color: colors.black.main,
+                        opacity: 1,
                     },
                     "&.Mui-selected:hover": {
-                        backgroundColor: colors.black.light,
+                        // textShadow: glowTextFx("5px", colors.grey.light),
                     },
                 },
             },
@@ -67,20 +90,22 @@ let theme = createTheme({
                 root: {
                     pointerEvents: "auto",
                     cursor: "none",
-                    textTransform: "lowercase",
-                    backgroundColor: colors.white.main,
-                    color: colors.white.contrastText,
-                    border: "1px solid",
-                    borderColor: colors.grey.main,
+                    textTransform: "uppercase",
+                    color: colors.black.main,
+                    border: "none",
+                    backgroundColor: "transparent",
+                    // opacity: 0.5,
+
                     "&:hover": {
-                        backgroundColor: colors.white.darker,
+                        backgroundColor: "transparent",
+                        // textShadow: glowTextFx("5px", colors.grey.light),
                     },
                     "&.Mui-selected": {
-                        backgroundColor: colors.black.main,
-                        color: colors.black.contrastText,
+                        // color: colors.black.main,
+                        opacity: 1,
                     },
                     "&.Mui-selected:hover": {
-                        backgroundColor: colors.black.light,
+                        // textShadow: glowTextFx("5px", colors.grey.light),
                     },
                 },
             },
@@ -114,23 +139,24 @@ let theme = createTheme({
         MuiCssBaseline: {
             styleOverrides: {
                 "*::-webkit-scrollbar": {
-                    width: "0.5em",
+                    width: "0.3em",
+                    overflow: "visible",
                 },
                 "*::-webkit-scrollbar-track": {
                     backgroundColor: colors.black.main,
-                    // border: "#818181 0.5px solid",
-                    borderRadius: "1em",
-                    // marginTop: bannerH,
-                    // marginBottom: bannerH,
+                    // borderRadius: "1em",
+                    visibility: "hidden",
                 },
 
                 "*::-webkit-scrollbar-thumb": {
-                    backgroundColor: colors.white.main,
-                    borderRadius: "1em",
+                    backgroundColor: colors.black.main,
+
+                    visibility: "hidden",
+                    // borderRadius: "1em",
                 },
 
                 "*::-webkit-scrollbar-thumb:hover": {
-                    backgroundColor: colors.white.darker,
+                    backgroundColor: colors.black.darker,
                 },
             },
         },
@@ -138,6 +164,9 @@ let theme = createTheme({
 });
 
 const activeClasses = Object.keys(theme.components);
-useStore.setState({ hoverClasses: activeClasses.map((c) => `.${c}-root`) });
+const hoverClasses = activeClasses.map((c) => `.${c}-root`);
+
+hoverClasses.push(".clickable");
+useStore.setState({ hoverClasses });
 
 export default theme;

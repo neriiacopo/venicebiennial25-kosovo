@@ -4,9 +4,6 @@ import { useFrame } from "@react-three/fiber";
 import { getIndicesInUvDomain, seededShuffle } from "../utils.js";
 import { useStore } from "../store/useStore.jsx";
 
-import { shaderMaterial } from "@react-three/drei";
-import { extend } from "@react-three/fiber";
-
 import GrayscaleSpriteMaterial from "./GrayscaleSpriteMaterial";
 
 export default function Entries({
@@ -19,6 +16,7 @@ export default function Entries({
     const seed = useMemo(() => Math.floor(Math.random() * 1000), []);
     const geometry = useStore((state) => state.uvmap);
     const spriteRefs = useRef([]);
+    const openEntry = useStore((state) => state.openEntry);
 
     const spriteBw = useStore((state) => state.spriteBw);
 
@@ -70,7 +68,7 @@ export default function Entries({
                         scale={[size * (obj.img?.aspectRatio || 1), size, 1]}
                         onClick={(e) => {
                             e.stopPropagation();
-                            useStore.setState({ selectedId: obj.id });
+                            openEntry(obj.id);
                         }}
                         onPointerOver={(e) => {
                             e.stopPropagation();
@@ -87,22 +85,12 @@ export default function Entries({
                             setHovereds(newHovereds);
                         }}
                     >
-                        {!spriteBw ? (
-                            <spriteMaterial
-                                map={obj.img?.texture}
-                                transparent
-                                depthTest={false}
-                                depthWrite={false}
-                            />
-                        ) : (
-                            <grayscaleSpriteMaterial
-                                uTexture={obj.img?.texture}
-                                uGrayscale={hovereds[i] ? 0.0 : 1.0}
-                                transparent
-                                depthTest={false}
-                                depthWrite={false}
-                            />
-                        )}
+                        <spriteMaterial
+                            map={obj.img?.texture}
+                            transparent
+                            depthTest={false}
+                            depthWrite={false}
+                        />
                     </sprite>
                 ))}
         </>

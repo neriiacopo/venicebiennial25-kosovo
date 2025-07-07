@@ -7,8 +7,11 @@ body,
     max-height: 100vh;
     overflow: clip;
     cursor: none;
-    /* font-size: 0.8rem; */
-    /* box-sizing: content-box; */
+}
+
+::selection {
+    background: transparent;
+    color: inherit;
 }
 
 .path {

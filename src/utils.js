@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import * as XLSX from "xlsx";
 
+// Fetching utilities -------------------------------------------------------------------------------------
 export async function excelToJson(urlPath) {
     const response = await fetch(urlPath);
     const arrayBuffer = await response.arrayBuffer();
@@ -41,6 +42,8 @@ export async function excelToJson(urlPath) {
         columns: renamedCols,
     };
 }
+
+// Scene utilities -------------------------------------------------------------------------------------
 
 export function seededRandom(seed) {
     let x = Math.sin(seed++) * 10000;
@@ -233,4 +236,13 @@ export function interpolateTriple(a, b, c, u) {
     } else {
         return b.map((_, i) => THREE.MathUtils.lerp(b[i], c[i], (u - 0.5) * 2));
     }
+}
+
+// UI utilities -------------------------------------------------------------------------------------
+
+export function glowTextFx(offset, color, blur = "2px") {
+    return `-${offset} -${offset} ${blur} ${color},
+            ${offset} -${offset} ${blur} ${color},
+            -${offset} ${offset} ${blur} ${color},
+            ${offset} ${offset} ${blur} ${color}`;
 }
