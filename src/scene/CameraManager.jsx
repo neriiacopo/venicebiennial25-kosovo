@@ -20,9 +20,9 @@ export default function CameraController() {
 
     const targetRotation = useRef({ x: 0, y: 0 });
     const targetPan = useRef({ x: 0, y: 0 });
-    const targetAngle = useRef(
-        useStore((state) => state.birdsCenter) || { lon: 0, lat: 0 }
-    );
+    const targetAngle = useStore((state) => state.birdCenter);
+
+    const centerTrackBall = useStore((state) => state.birdCenter);
     const currentAngle = useRef({ lon: 0, lat: 0 });
 
     // Initial camera position
@@ -167,8 +167,8 @@ export default function CameraController() {
             };
             const radius = globe.radius * 1.8;
 
-            const targetLon = pristina.lon;
-            const targetLat = pristina.lat;
+            const targetLon = centerTrackBall.lat;
+            const targetLat = centerTrackBall.lon;
 
             const targetX = -pointer.x;
             const targetY = pointer.y;
@@ -178,13 +178,13 @@ export default function CameraController() {
                 (targetLon - currentAngle.current.lon) *
                     0.02 *
                     cameraSpeed.current.value -
-                targetX * 0.1 * cameraSpeed.current.value;
+                targetX * 0.5 * cameraSpeed.current.value;
 
             currentAngle.current.lat +=
                 (targetLat - currentAngle.current.lat) *
                     0.02 *
                     cameraSpeed.current.value +
-                targetY * 0.1 * cameraSpeed.current.value;
+                targetY * 0.5 * cameraSpeed.current.value;
 
             const destination = [
                 pivot.x +

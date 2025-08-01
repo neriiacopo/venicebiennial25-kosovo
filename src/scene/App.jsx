@@ -10,6 +10,8 @@ import { useStore } from "../store/useStore.jsx";
 import { fetchTrailData, getCenterLastPositions } from "../utils.js";
 
 import Loader from "./Loader.jsx";
+import { ConstructionOutlined } from "@mui/icons-material";
+import { red } from "@mui/material/colors";
 
 export default function App() {
     const [ready, setReady] = useState(false);
@@ -147,15 +149,31 @@ export default function App() {
                 globe
             );
 
+            const lastLatLons = [];
+
+            processedData.forEach((entry) => {
+                const birds = reducedTrails.map((t) => t.name);
+
+                if (birds.includes(entry.title)) {
+                    entry.position = reducedTrails.find(
+                        (t) => t.name === entry.title
+                    ).lastPosition;
+
+                    lastLatLons.push(
+                        reducedTrails.find((t) => t.name === entry.title)
+                            .lastLatLon
+                    );
+                } else {
+                    entry.position = null;
+                }
+            });
+
             useStore.setState({
                 db: processedData,
                 narratives: data.columns,
                 ready: true,
                 trails: reducedTrails,
-                birdCenter: getCenterLastPositions(
-                    processedData,
-                    reducedTrails
-                ),
+                birdCenter: getCenterLastPositions(lastLatLons),
             });
             setReady(true);
         }

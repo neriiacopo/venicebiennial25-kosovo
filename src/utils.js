@@ -1,4 +1,7 @@
-import { AirlineSeatLegroomReduced } from "@mui/icons-material";
+import {
+    AirlineSeatLegroomReduced,
+    ConstructionOutlined,
+} from "@mui/icons-material";
 import * as THREE from "three";
 import * as XLSX from "xlsx";
 
@@ -59,12 +62,13 @@ export async function fetchTrailData(urlPath, globe = {}, maxPoints = 500) {
     const individuals = Object.keys(trailsData);
 
     const reducedTrails = [];
-    const lastPositions = [];
 
     for (const individual of individuals) {
         const data = trailsData[individual];
 
-        const positions = data.map((d) =>
+        const lastLatLon = data[data.length - 1];
+
+        const positions = data.map((d, i) =>
             latLonToXYZ([d.lat, 0, d.lon], globe.radius + 1, globe.center)
         );
 
@@ -81,7 +85,7 @@ export async function fetchTrailData(urlPath, globe = {}, maxPoints = 500) {
         1;
         birdData.positions = reduced;
         birdData.lastPosition = reduced[reduced.length - 1];
-        lastPositions.push(birdData.lastPosition);
+        birdData.lastLatLon = [lastLatLon.lat, 0, lastLatLon.lon];
 
         reducedTrails.push(birdData);
     }
@@ -91,23 +95,8 @@ export async function fetchTrailData(urlPath, globe = {}, maxPoints = 500) {
 
 // Scene utilities -------------------------------------------------------------------------------------
 
-export function getCenterLastPositions(processedData, reducedTrails) {
-    const lastPositions = [];
-
-    processedData.forEach((entry) => {
-        const birds = reducedTrails.map((t) => t.name);
-        if (birds.includes(entry.title)) {
-            entry.position = reducedTrails.find(
-                (t) => t.name === entry.title
-            ).lastPosition;
-
-            lastPositions.push(entry.position);
-        } else {
-            entry.position = null;
-        }
-    });
-
-    const sum = lastPositions.reduce(
+export function getCenterLastPositions(lastLatLons) {
+    const sum = lastLatLons.reduce(
         (acc, pos) => {
             acc[0] += pos[0];
             acc[1] += pos[1];
@@ -117,8 +106,8 @@ export function getCenterLastPositions(processedData, reducedTrails) {
         [0, 0, 0]
     );
 
-    const center = lastPositions.length
-        ? sum.map((v) => v / lastPositions.length)
+    const center = lastLatLons.length
+        ? sum.map((v) => v / lastLatLons.length)
         : [0, 0, 0];
 
     return { lat: center[0], lon: center[2] };
