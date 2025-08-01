@@ -1,14 +1,17 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
-import { glowTextFx } from "../utils";
+import { glowTextFx, randomStyle } from "../utils";
 
 import { useStore } from "../store/useStore";
 
 const fonts = {
+    clean: "ABCMonumentGrotesk-Cue-6,Arial, sans-serif",
+    article: "ABCMonumentGrotesk-Cue-6,Arial, sans-serif",
     p: "ABCMonumentGrotesk-Cue-7,Arial, sans-serif",
     title: "ABCMonumentGrotesk-Cue-8,Arial, sans-serif",
-    button: "ABCMonumentGrotesk-Cue-9,Arial, sans-serif",
-    navButton: "ABCMonumentGrotesk-Cue-7,Arial, sans-serif",
+    button: `ABCMonumentGrotesk-Cue-${randomStyle([7, 9])},Arial, sans-serif`,
+    navButton: `ABCMonumentGrotesk-Cue-6,Arial, sans-serif`,
+    credits: "ABCMonumentGrotesk-Cue-6,Arial, sans-serif",
 };
 
 const colors = {
@@ -52,6 +55,7 @@ let theme = createTheme({
 
     components: {
         clickable: {},
+
         MuiToggleButton: {
             styleOverrides: {
                 root: {
@@ -162,6 +166,8 @@ let theme = createTheme({
         },
     },
 });
+
+theme = responsiveFontSizes(theme);
 
 const activeClasses = Object.keys(theme.components);
 const hoverClasses = activeClasses.map((c) => `.${c}-root`);

@@ -24,8 +24,8 @@ export default function Globe({ u, offset = 0.1 }) {
 
     useFrame((state) => {
         if (meshRef.current) {
-            meshRef.current.material.uniforms.time.value =
-                state.clock.elapsedTime;
+            // meshRef.current.material.uniforms.time.value =
+            //     state.clock.elapsedTime;
             meshRef.current.material.uniforms.uBlend.value = u * 2;
         }
     });
@@ -58,8 +58,8 @@ export default function Globe({ u, offset = 0.1 }) {
       void main() {
         vec4 texColor = texture2D(uTexture, vUv);
 
-        float n1 = random(vUv * 10.0 + time * 0.5);
-        float n2 = random(vUv * 30.0 - time * 0.2);
+        float n1 = random(vUv * 10.0 + 0.4 * 0.5);
+        float n2 = random(vUv * 30.0 - 0.4 * 0.2);
         float blendedNoise = n1 * n2;
 
         // Multiply texture color with noise
@@ -78,42 +78,18 @@ export default function Globe({ u, offset = 0.1 }) {
     );
     return (
         <>
-            {scale == "xl" && (
-                <Sphere
-                    args={[r - offset, 100, 100]}
-                    // scale={[1 + 1 * u, 1, 1 + 1 * u]}
-                    scale={[1, 1, 1]}
-                    position={[0, r, 0]}
-                    material-transparent={true}
-                    material-opacity={1 - u * 2}
-                    // material-map={texture}
-                    rotation={[Math.PI / 2, -Math.PI / 2, 0]}
-                    ref={meshRef}
-                    material={material}
-                />
-            )}
+            <Sphere
+                args={[r - offset, 100, 100]}
+                // scale={[1 + 1 * u, 1, 1 + 1 * u]}
+                scale={[1, 1, 1]}
+                position={[0, r, 0]}
+                material-transparent={true}
+                // material-opacity={1 - u * 2}
+                // material-map={texture}
+                rotation={[Math.PI / 2, -Math.PI / 2, 0]}
+                ref={meshRef}
+                material={material}
+            />
         </>
-    );
-}
-
-function SphereAtLatLon({
-    location,
-    world = { radius, center },
-    color = "red",
-    size = 10,
-}) {
-    const position = latLonToXYZ(
-        [location.lat, 0, location.lon],
-        world.radius,
-        world.center
-    );
-
-    return (
-        <group>
-            <mesh position={position}>
-                <sphereGeometry args={[size, 32, 32]} />
-                <meshStandardMaterial color={color} />
-            </mesh>
-        </group>
     );
 }

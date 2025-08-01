@@ -1,3 +1,4 @@
+import { AirlineSeatLegroomReduced } from "@mui/icons-material";
 import * as THREE from "three";
 import * as XLSX from "xlsx";
 
@@ -43,7 +44,85 @@ export async function excelToJson(urlPath) {
     };
 }
 
+export async function fetchJson(urlPath) {
+    const response = await fetch(urlPath);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+}
+
+export async function fetchTrailData(urlPath, globe = {}, maxPoints = 500) {
+    const response = await fetch(urlPath);
+    const trailsData = await response.json();
+
+    const individuals = Object.keys(trailsData);
+
+    const reducedTrails = [];
+    const lastPositions = [];
+
+    for (const individual of individuals) {
+        const data = trailsData[individual];
+
+        const positions = data.map((d) =>
+            latLonToXYZ([d.lat, 0, d.lon], globe.radius + 1, globe.center)
+        );
+
+        const reduced = [];
+        if (positions.length > maxPoints) {
+            const step = (positions.length - 1) / (maxPoints - 1);
+            for (let i = 0; i < maxPoints; i++) {
+                reduced.push(positions[Math.round(i * step)]);
+            }
+        }
+
+        const birdData = {};
+        birdData.name = individual;
+        1;
+        birdData.positions = reduced;
+        birdData.lastPosition = reduced[reduced.length - 1];
+        lastPositions.push(birdData.lastPosition);
+
+        reducedTrails.push(birdData);
+    }
+
+    return reducedTrails;
+}
+
 // Scene utilities -------------------------------------------------------------------------------------
+
+export function getCenterLastPositions(processedData, reducedTrails) {
+    const lastPositions = [];
+
+    processedData.forEach((entry) => {
+        const birds = reducedTrails.map((t) => t.name);
+        if (birds.includes(entry.title)) {
+            entry.position = reducedTrails.find(
+                (t) => t.name === entry.title
+            ).lastPosition;
+
+            lastPositions.push(entry.position);
+        } else {
+            entry.position = null;
+        }
+    });
+
+    const sum = lastPositions.reduce(
+        (acc, pos) => {
+            acc[0] += pos[0];
+            acc[1] += pos[1];
+            acc[2] += pos[2];
+            return acc;
+        },
+        [0, 0, 0]
+    );
+
+    const center = lastPositions.length
+        ? sum.map((v) => v / lastPositions.length)
+        : [0, 0, 0];
+
+    return { lat: center[0], lon: center[2] };
+}
 
 export function seededRandom(seed) {
     let x = Math.sin(seed++) * 10000;
@@ -245,4 +324,8 @@ export function glowTextFx(offset, color, blur = "2px") {
             ${offset} -${offset} ${blur} ${color},
             -${offset} ${offset} ${blur} ${color},
             ${offset} ${offset} ${blur} ${color}`;
+}
+
+export function randomStyle(range = [1, 4]) {
+    return Math.floor(Math.random() * (range[1] - range[0]) + 1) + range[0];
 }

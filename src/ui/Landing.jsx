@@ -1,31 +1,26 @@
 import ReactMarkdown from "react-markdown";
 import { Box, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo, Fragment } from "react";
 
 import MovingBox from "./MovingBox";
-import { glowTextFx } from "../utils";
+import StylizedCharacters from "./StylizedCharacters";
+
+import { glowTextFx, randomStyle } from "../utils";
 
 import { useTheme } from "@mui/material/styles";
 import { useStore } from "../store/useStore";
 
 export default function Landing({}) {
     const landing = useStore((state) => state.landing);
-    const fxIntro = useStore((state) => state.fxIntro);
-
     const ratios = { credits: "33%", intro: "52%", logo: "15%" };
-
-    const fadeRef = useRef(null);
     const longerDivRef = useRef(null);
-
-    const visibleP = 0; // double check
-    const invisibleP = 0; // bottom p for fading
 
     useEffect(() => {
         if (longerDivRef.current) {
             const handleChildrenLoaded = () => {
                 if (longerDivRef.current) {
                     const totalH = longerDivRef.current.scrollHeight;
-                    useStore.setState({ introH: totalH - invisibleP });
+                    useStore.setState({ introH: totalH });
                 }
             };
 
@@ -88,6 +83,8 @@ export default function Landing({}) {
     );
 }
 
+const seed = Math.random() * 1000;
+
 function Title() {
     const theme = useTheme();
     const blurTitle = useStore((state) => state.blurTitle);
@@ -101,43 +98,38 @@ function Title() {
 
     const content = [
         {
-            text: (
-                <>
-                    Pavilion of the Republic of Kosovo <br />
-                    at the 19th International Architecture Exhibition <br />
-                    La Biennale di Venezia
-                </>
-            ),
+            label: [
+                "Pavilion of the Republic of Kosovo",
+                "at the 19th International Architecture Exhibition",
+                "La Biennale di Venezia",
+            ],
             glow: "2px",
             variant: "h4",
-            mb: 4,
+            my: 4,
+            styled: false,
         },
         {
-            text: <>Erzë Dinarama</>,
+            label: ["Erzë Dinarama"],
             glow: "3px",
             variant: "h2",
+            styled: true,
         },
         {
-            text: (
-                <>
-                    EMERGING <br /> Lulebora nuk çel më <br />
-                    ASSEMBLAGES
-                </>
-            ),
+            label: ["EMERGING", "Lulebora nuk çel më", "ASSEMBLAGES"],
             glow: "3px",
             variant: "h2",
+            styled: true,
         },
         {
-            text: (
-                <>
-                    10.05 – 24.11 <br />
-                    Arsenale, Sestiere Castello, <br />
-                    Campo della Tana 2169/F, 30122 Venice, Italy
-                </>
-            ),
+            label: [
+                "10.05 – 24.11",
+                "Arsenale, Sestiere Castello,",
+                "Campo della Tana 2169/F, 30122 Venice, Italy",
+            ],
             glow: "2px",
             variant: "h4",
-            mb: 4,
+            mt: 4,
+            styled: false,
         },
     ];
 
@@ -160,7 +152,9 @@ function Title() {
                 <Typography
                     key={index}
                     variant={item.variant}
+                    style={{}}
                     sx={{
+                        fontFeatureSettings: `"ss0${item.styleSet}" 1`,
                         mb: item.mb || 0,
                         textShadow: blurTitle
                             ? glowTextFx(
@@ -172,44 +166,29 @@ function Title() {
                         ...noisy,
                     }}
                 >
-                    {item.text}
+                    {item.styled
+                        ? item.label.map((line, i) => (
+                              <Fragment key={i}>
+                                  <StylizedCharacters
+                                      label={line}
+                                      percentage={0.5}
+                                      seed={
+                                          line.length *
+                                          seed *
+                                          (i + 1) *
+                                          (index + 1)
+                                      }
+                                  />
+                                  {i != item.label.length ? <br /> : ""}
+                              </Fragment>
+                          ))
+                        : item.label.map((line, i) => (
+                              <Fragment key={i}>
+                                  <span>{line}</span>
+                                  {i != item.label.length ? <br /> : ""}
+                              </Fragment>
+                          ))}
                 </Typography>
-            ))}
-        </Box>
-    );
-}
-
-function TitleImg() {
-    const theme = useTheme();
-    const blurTitle = useStore((state) => state.blurTitle);
-
-    const paths = [
-        "./outlined_2_desktop_header.svg",
-        "./outlined_2_desktop_title.svg",
-        "./outlined_2_desktop_footer.svg",
-    ];
-
-    return (
-        <Box
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "space-around",
-                py: 4,
-                height: "100vh",
-                width: "50%",
-                textAlign: "center",
-
-                color: theme.colors.grey.darkest,
-            }}
-        >
-            {paths.map((src, idx) => (
-                <img
-                    key={idx}
-                    src={src}
-                    style={{ width: "100%", height: "auto", marginBottom: 16 }}
-                />
             ))}
         </Box>
     );
@@ -274,6 +253,7 @@ function BiennalLogo({ w, opacity }) {
 
 function Credits({ path }) {
     const [content, setContent] = useState(null);
+    const theme = useTheme();
 
     useEffect(() => {
         fetch(path)
@@ -295,7 +275,14 @@ function Credits({ path }) {
                     p: ({ node, ...props }) => (
                         <Typography
                             {...props}
-                            sx={{ textAlign: "justify", mt: 0, mb: 3 }}
+                            sx={{
+                                textAlign: "justify",
+                                mt: 0,
+                                mb: 3,
+                                fontSize: "1.05rem",
+                                lineHeight: 1.2,
+                                fontFamily: theme.fonts.p,
+                            }}
                         />
                     ),
                 }}

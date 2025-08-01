@@ -1,8 +1,7 @@
-import { Box, Button, ToggleButton, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 import { useStore } from "../store/useStore";
-import { useState, useEffect, use } from "react";
 
 import ButtonL from "./ButtonL";
 
@@ -13,14 +12,17 @@ export default function NavPages() {
     const narratives = useStore((state) => state.narratives);
     const drop = useStore((state) => state.dropNarratives);
     const activeNarratives = useStore((state) => state.activeNarratives);
+    const landing = useStore((state) => state.landing);
 
     const theme = useTheme();
     const bannerH = theme.bannerH;
 
     function toggleDrop() {
-        useStore.setState({ dropNarratives: !drop });
-        // setDrop(!drop);
-        console.log("Toggle drop", drop);
+        if (landing) {
+            useStore.setState({ dropNarratives: !drop, landing: false });
+        } else {
+            useStore.setState({ dropNarratives: !drop });
+        }
     }
 
     function ButtonS({ label, onClick }) {
@@ -29,12 +31,13 @@ export default function NavPages() {
                 sx={{
                     textTransform: "none",
                     textDecoration: "underline",
-                    textDecorationThickness: "2px",
+                    textDecorationThickness: "1px",
                     textAlign: "left",
                     m: 0,
                     pr: 2,
                     pointerEvents: "auto",
                     backgroundColor: "transparent",
+                    fontSize: "1.05rem",
                 }}
                 onClick={onClick}
                 className="clickable"
@@ -55,7 +58,7 @@ export default function NavPages() {
 
                     px: 8,
                     pr: 16,
-                    pt: 8,
+                    pt: 4,
                     width: "33vw",
                     textAlign: "left",
                     textJustify: "left",
@@ -96,14 +99,15 @@ export default function NavPages() {
                                 display: "inline-block",
                                 transition: "transform 0.3s",
                                 transform: drop
-                                    ? "rotate(-90deg)"
-                                    : "rotate(0deg)",
-                                // userSelect: "none",
+                                    ? "rotate(0deg)"
+                                    : "rotate(90deg)",
+
+                                fontFeatureSettings: `"ss04" 1`,
                             }}
                             className="clickable"
                             onClick={toggleDrop}
                         >
-                            ←
+                            v
                         </Typography>
                     </Box>
                 </Stack>

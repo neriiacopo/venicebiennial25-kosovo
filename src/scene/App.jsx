@@ -1,28 +1,26 @@
-import React from "react";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense, useRef } from "react";
 import * as THREE from "three";
 import { excelToJson } from "../utils.js";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
+
 import SceneContent from "./SceneContent";
 import CameraManager from "./CameraManager";
 
 import { useStore } from "../store/useStore.jsx";
+import { fetchTrailData, getCenterLastPositions } from "../utils.js";
+
+import Loader from "./Loader.jsx";
 
 export default function App() {
-    const [ready, setReady] = useState(true);
+    const [ready, setReady] = useState(false);
     const setScale = useStore((state) => state.setScale);
     const landing = useStore((state) => state.landing);
+    const globe = useStore((state) => state.globe);
 
     useEffect(() => {
         async function Init() {
-            console.time("Init() Total");
-
-            console.time("Load Excel");
             const data = await excelToJson("data/content.xlsx");
-            console.timeEnd("Load Excel");
 
-            console.time("Process Items");
             const processedData = await Promise.all(
                 data.data.map(async (item, i) => {
                     const path = `data/${item.folder}/${item.image}.${item.extension}`;
@@ -30,20 +28,43 @@ export default function App() {
                     if (
                         ["png", "jpg", "jpeg", "webp"].includes(item.extension)
                     ) {
-                        console.time(`Image Load ${i}`);
-                        const texture = await new Promise((resolve) =>
-                            new THREE.TextureLoader().load(path, resolve)
-                        );
-                        console.timeEnd(`Image Load ${i}`);
+                        try {
+                            const texture = await new Promise(
+                                (resolve, reject) =>
+                                    new THREE.TextureLoader().load(
+                                        path,
+                                        resolve,
+                                        undefined,
+                                        () =>
+                                            reject(
+                                                new Error(
+                                                    `Image not found: ${path}`
+                                                )
+                                            )
+                                    )
+                            );
 
-                        const image = texture.image;
-                        const aspectRatio = image.width / image.height || 1;
+                            const image = texture.image;
+                            const aspectRatio =
+                                image?.width / image?.height || 1;
 
-                        return {
-                            ...item,
-                            id: i,
-                            img: { texture, aspectRatio, path },
-                        };
+                            return {
+                                ...item,
+                                id: i,
+                                img: { texture, aspectRatio, path },
+                            };
+                        } catch (err) {
+                            console.warn(err.message);
+                            return {
+                                ...item,
+                                id: i,
+                                img: {
+                                    texture: null,
+                                    aspectRatio: null,
+                                    path: null,
+                                },
+                            };
+                        }
                     } else if (
                         ["mp4", "webm", "mov"].includes(item.extension)
                     ) {
@@ -53,31 +74,61 @@ export default function App() {
                         video.muted = true;
                         video.playsInline = true;
                         video.loop = true;
-                        video.load();
 
-                        console.time(`Video Load ${i}`);
-                        await new Promise((resolve) => {
-                            video.addEventListener("loadeddata", resolve, {
-                                once: true,
+                        try {
+                            await new Promise((resolve, reject) => {
+                                const onError = () =>
+                                    reject(
+                                        new Error(
+                                            `Video failed to load: ${path}`
+                                        )
+                                    );
+                                video.addEventListener("error", onError, {
+                                    once: true,
+                                });
+                                video.addEventListener(
+                                    "loadeddata",
+                                    () => {
+                                        video.removeEventListener(
+                                            "error",
+                                            onError
+                                        );
+                                        resolve();
+                                    },
+                                    { once: true }
+                                );
+
+                                video.load();
                             });
-                        });
-                        console.timeEnd(`Video Load ${i}`);
 
-                        const texture = new THREE.VideoTexture(video);
-                        texture.minFilter = THREE.LinearFilter;
-                        texture.magFilter = THREE.LinearFilter;
-                        texture.format = THREE.RGBAFormat;
+                            const texture = new THREE.VideoTexture(video);
+                            texture.minFilter = THREE.LinearFilter;
+                            texture.magFilter = THREE.LinearFilter;
+                            texture.format = THREE.RGBAFormat;
 
-                        const aspectRatio =
-                            video.videoWidth / video.videoHeight || 1;
+                            const aspectRatio =
+                                video.videoWidth / video.videoHeight || 1;
 
-                        return {
-                            ...item,
-                            id: i,
-                            img: { texture, aspectRatio },
-                            video: { path, element: video },
-                        };
+                            return {
+                                ...item,
+                                id: i,
+                                img: { texture, aspectRatio },
+                                video: { path, element: video },
+                            };
+                        } catch (err) {
+                            console.warn(err.message);
+                            return {
+                                ...item,
+                                id: i,
+                                img: {
+                                    texture: null,
+                                    aspectRatio: null,
+                                    path: null,
+                                },
+                            };
+                        }
                     } else {
+                        // Unsupported extension fallback
                         return {
                             ...item,
                             id: i,
@@ -90,27 +141,35 @@ export default function App() {
                     }
                 })
             );
-            console.timeEnd("Process Items");
 
-            console.time("Set Store State");
+            const reducedTrails = await fetchTrailData(
+                "data/movebank_data_grouped.json",
+                globe
+            );
+
             useStore.setState({
                 db: processedData,
                 narratives: data.columns,
                 ready: true,
+                trails: reducedTrails,
+                birdCenter: getCenterLastPositions(
+                    processedData,
+                    reducedTrails
+                ),
             });
-            console.timeEnd("Set Store State");
-
-            console.time("Set Scale");
-            setScale("xl");
-            console.timeEnd("Set Scale");
-
-            console.timeEnd("Init() Total");
+            setReady(true);
         }
 
         Init();
     }, []);
 
-    if (!ready || landing) return null; // or a loading spinner
+    useEffect(() => {
+        if (!landing) {
+            setScale("xl");
+        }
+    }, [landing]);
+
+    if (!ready) return null; // or a loading spinner
 
     return (
         <Canvas
@@ -120,13 +179,14 @@ export default function App() {
                 position: [0, 0, -1000],
                 fov: 10,
             }}
-            dpr={[1, 1.1]}
             id="canvas"
         >
-            <group rotation={[-Math.PI / 2, 0, 0]}>
-                <SceneContent />
-                <CameraManager />
-            </group>
+            <Suspense fallback={<Loader />}>
+                <group rotation={[-Math.PI / 2, 0, 0]}>
+                    <SceneContent />
+                    <CameraManager />
+                </group>
+            </Suspense>
         </Canvas>
     );
 }

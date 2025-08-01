@@ -1,40 +1,41 @@
-import { useEffect, useState, useRef } from "react";
-
+import { useEffect, useRef, useState } from "react";
 import { useStore } from "../store/useStore";
 
+// Platform check
+const isMac = /Mac|iPhone|iPad|iPod/i.test(navigator.platform);
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
 export default function PageScroller({ scroll }) {
-    const introH = useStore((state) => state.introH);
+    const introH = useStore((s) => s.introH);
     const scales = useStore.getState().scales;
-    const scale = useStore.getState().scale; // why??
-    const setScale = useStore((state) => state.setScale);
-    const selectedId = useStore((state) => state.selectedId);
-    const fxIntro = useStore((state) => state.fxIntro);
+    const scale = useStore.getState().scale;
+    const setScale = useStore((s) => s.setScale);
+    const selectedId = useStore((s) => s.selectedId);
+    const fxIntro = useStore((s) => s.fxIntro);
 
     const [sectionIdx, setSectionIdx] = useState(scales.indexOf(scale));
     const isThrottled = useRef(false);
-    const scrollS = useRef(0); // To increase threshold for scroll sensitivity
+    const scrollY = useRef(0);
+    const scrollS = useRef(0);
+    const scrollThreshold = 1000;
 
-    const scrollY = useRef(0); // To increase threshold for scroll sensitivity
-    const scrollTreshold = 1000;
+    const rAFScrollDelta = useRef(0);
+    const isAnimating = useRef(false);
 
-    const handleScroll = (event) => {
+    const triggerScrollUpdate = (delta) => {
         if (scroll) {
-            scrollY.current += event.deltaY * 0.5;
+            scrollY.current += delta * 0.5;
+            scrollY.current = Math.max(scrollY.current, 0);
 
-            if (scrollY.current < 0) {
-                scrollY.current = 0;
-            }
-
-            const scrollYCentered = scrollY.current + window.innerHeight; // use center of screen as reference
-
+            const offFactor = 1.25;
+            const scrollYCentered =
+                scrollY.current + window.innerHeight * offFactor;
             const visThreshold = scrollYCentered - introH;
-            const stopY = introH - window.innerHeight;
+            const stopY = introH - window.innerHeight * offFactor;
 
             if (visThreshold >= 0) {
-                useStore.setState({ introY: stopY });
+                useStore.setState({ introY: stopY, landing: false });
                 scrollY.current = stopY;
-
-                useStore.setState({ landing: false });
 
                 setTimeout(() => {
                     useStore.setState({ dropNarratives: true });
@@ -42,55 +43,81 @@ export default function PageScroller({ scroll }) {
             } else {
                 useStore.setState({ introY: scrollY.current });
             }
-        }
-        if (!scroll) {
-            scrollS.current += event.deltaY;
+        } else {
+            scrollS.current += delta;
 
             if (isThrottled.current) return;
 
-            if (Math.abs(scrollS.current) >= scrollTreshold) {
+            if (Math.abs(scrollS.current) >= scrollThreshold) {
                 isThrottled.current = true;
-
-                // Pause after scrolling (do we need it?)
-                setTimeout(() => {
-                    isThrottled.current = false;
-                }, 10);
+                setTimeout(() => (isThrottled.current = false), 300);
 
                 setSectionIdx((prev) => {
-                    if (scrollS.current > 0 && prev < 2) {
-                        scrollS.current = 0; // Reset after triggering
+                    if (scrollS.current > 0 && prev < scales.length - 1) {
+                        scrollS.current = 0;
                         return prev + 1;
                     }
                     if (scrollS.current < 0 && prev > 0) {
                         scrollS.current = 0;
                         return prev - 1;
                     }
-                    scrollS.current = 0; // Reset if boundary is reached
+                    scrollS.current = 0;
                     return prev;
                 });
             }
         }
     };
 
-    // Reset scroll on change landing
-    useEffect(() => {
-        if (scroll && scrollY.current != 0) {
-            scrollY.current = 0; // Reset scroll position
-        }
-    }, [scroll]);
+    const handleScroll = (e) => {
+        e.preventDefault();
 
-    // Change Scale if scroll is successfull
+        const delta = e.deltaY;
+
+        if (isMac && isSafari) {
+            rAFScrollDelta.current += delta * 0.1;
+        } else {
+            triggerScrollUpdate(delta);
+        }
+    };
+
+    const animateScroll = () => {
+        if (!isAnimating.current) return;
+
+        if (Math.abs(rAFScrollDelta.current) > 0.5) {
+            const delta = rAFScrollDelta.current;
+            rAFScrollDelta.current *= 0.1; // friction
+
+            triggerScrollUpdate(delta);
+        } else {
+            rAFScrollDelta.current = 0;
+        }
+
+        requestAnimationFrame(animateScroll);
+    };
+
+    useEffect(() => {
+        if (selectedId || introH === 0) return;
+
+        window.addEventListener("wheel", handleScroll, { passive: false });
+
+        if (isMac && isSafari && !isAnimating.current) {
+            isAnimating.current = true;
+            requestAnimationFrame(animateScroll);
+        }
+
+        return () => {
+            window.removeEventListener("wheel", handleScroll);
+            isAnimating.current = false;
+        };
+    }, [scroll, introH, selectedId]);
+
     useEffect(() => {
         setScale(scales[sectionIdx]);
     }, [sectionIdx]);
 
     useEffect(() => {
-        if (selectedId) return;
-        if (introH === 0) return;
-
-        window.addEventListener("wheel", handleScroll);
-        return () => window.removeEventListener("wheel", handleScroll);
-    }, [selectedId, scroll, introH]);
+        if (scroll && scrollY.current !== 0) scrollY.current = 0;
+    }, [scroll]);
 
     return null;
 }

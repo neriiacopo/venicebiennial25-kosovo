@@ -20,7 +20,9 @@ export default function CameraController() {
 
     const targetRotation = useRef({ x: 0, y: 0 });
     const targetPan = useRef({ x: 0, y: 0 });
-    const targetAngle = useRef(pristina);
+    const targetAngle = useRef(
+        useStore((state) => state.birdsCenter) || { lon: 0, lat: 0 }
+    );
     const currentAngle = useRef({ lon: 0, lat: 0 });
 
     // Initial camera position

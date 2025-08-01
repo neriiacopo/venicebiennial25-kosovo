@@ -127,15 +127,4 @@ export let useStore = create((set, get) => ({
             cameraSettings: options,
         });
     },
-
-    // DEV stuff
-
-    spriteBw: true,
-    updateFov: () => {
-        const scale = get().scale;
-        const options = get().cameraOptions[scale];
-        set({
-            cameraSettings: options,
-        });
-    },
 }));

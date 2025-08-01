@@ -83,9 +83,7 @@ export default function NavScales() {
                                     "2px"
                                 ),
                             }}
-                        >
-                            /
-                        </Typography>
+                        ></Typography>
                     )}
                 </Box>
             ))}

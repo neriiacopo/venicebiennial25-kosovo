@@ -2,6 +2,10 @@ import ReactMarkdown from "react-markdown";
 import { useState, useEffect } from "react";
 import { CircularProgress, Container, Typography } from "@mui/material";
 
+import StylizedCharacters from "./StylizedCharacters";
+
+import { randomStyle } from "../utils";
+
 import { useTheme } from "@mui/material";
 
 export default function MarkdownPage({ title, path }) {
@@ -24,9 +28,15 @@ export default function MarkdownPage({ title, path }) {
                     pt: "20vh",
                     mb: theme.bannerH,
                     textTransform: "uppercase",
+
+                    // fontFeatureSettings: `"ss0${randomStyle()}" 1`,
                 }}
             >
-                {title}
+                <StylizedCharacters
+                    label={title}
+                    percentage={0.8}
+                    seed={Math.random() * 1000}
+                />
             </Typography>
             <ReactMarkdown
                 components={{
@@ -34,8 +44,16 @@ export default function MarkdownPage({ title, path }) {
                         <Typography
                             variant="h4"
                             {...props}
-                            sx={{ mt: theme.bannerH }}
-                        />
+                            sx={{
+                                mt: theme.bannerH,
+                            }}
+                        >
+                            <StylizedCharacters
+                                label={props.children}
+                                percentage={0.5}
+                                seed={Math.random() * 1000}
+                            />
+                        </Typography>
                     ),
 
                     strong: ({ node, ...props }) => (
@@ -52,7 +70,12 @@ export default function MarkdownPage({ title, path }) {
                     p: ({ node, ...props }) => (
                         <Typography
                             {...props}
-                            sx={{ textAlign: "left", m: "1em 0" }}
+                            sx={{
+                                textAlign: "left",
+                                m: "1em 0",
+                                fontFamily: theme.fonts.article,
+                                lineHeight: "1.2rem",
+                            }}
                         />
                     ),
                 }}

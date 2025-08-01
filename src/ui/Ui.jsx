@@ -4,11 +4,7 @@ import { useTheme } from "@mui/material/styles";
 
 import { useStore } from "../store/useStore";
 
-import PageScroller from "./PageScroller";
-import BannerStates from "./BannerStates";
-import Cursor from "./Cursor";
 import NavPages from "./NavPages";
-import NavExtras from "./NavExtras";
 import ModalEntry from "./ModalEntry";
 import NavScales from "./NavScales";
 

@@ -1,6 +1,7 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Stack } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import { useTheme } from "@mui/material/styles";
+
 import { useStore } from "../store/useStore";
 
 import MarkdownPage from "./MarkdownPage";
@@ -57,6 +58,7 @@ export default function ModalEntry() {
 
     return (
         <>
+            {/* Dummy background for capturing clicks -> exit */}
             {entry && (
                 <Box
                     sx={{
@@ -69,12 +71,13 @@ export default function ModalEntry() {
                         pointerEvents: "auto",
                     }}
                     onClick={() => {
-                        console.log("sss");
+                        closeEntry();
                     }}
                 ></Box>
             )}
+            {/* Modal Entry Box */}
             <Box
-                key={selectedId} // Force re-animation on entry change
+                key={selectedId}
                 sx={{
                     position: "fixed",
                     top: 0,
@@ -109,7 +112,7 @@ export default function ModalEntry() {
                                     height: "100%",
                                     backgroundImage: `url(${noisePattern})`,
                                     backgroundSize: "cover",
-                                    backgroundColor: theme.colors.grey.darker,
+                                    backgroundColor: theme.colors.grey.light,
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
@@ -139,7 +142,7 @@ export default function ModalEntry() {
                                         borderColor: theme.colors.grey.main,
                                         backgroundImage: `url(${noisePattern})`,
                                         backgroundColor:
-                                            theme.colors.grey.darker,
+                                            theme.colors.grey.light,
                                         backgroundSize: "cover",
                                         overflow: "hidden",
                                     }}
@@ -160,7 +163,7 @@ export default function ModalEntry() {
                                         height: "100%",
                                         backgroundImage: `url(${noisePattern})`,
                                         backgroundColor:
-                                            theme.colors.grey.darker,
+                                            theme.colors.grey.light,
                                         backgroundSize: "cover",
                                         pb: 2,
                                     }}
@@ -233,7 +236,7 @@ function BlurryImg({ src, alt }) {
 }
 
 // Nav Button
-function NavBtn({ label, onClick, disabled }) {
+function NavBtn({ label, onClick, disabled, styleSet = "ss01" }) {
     const theme = useTheme();
     return (
         <Box
@@ -241,17 +244,30 @@ function NavBtn({ label, onClick, disabled }) {
             className="clickable"
             sx={{ px: 4, pointerEvents: disabled ? "none" : "auto" }}
         >
-            <Typography
-                sx={{
-                    fontFamily: theme.fonts.navButton,
-                    fontWeight: 400,
-                    filter: disabled ? "blur(2px)" : "none",
-                    opacity: disabled ? 0.7 : 1,
-                    transition: "filter .6s, text-shadow .6s, opacity .6s",
-                }}
+            <Stack
+                direction={"row"}
+                spacing={0}
+                alignItems="center"
             >
-                {label}
-            </Typography>
+                {label.map((part, idx) => (
+                    <Typography
+                        key={idx}
+                        sx={{
+                            fontFamily: theme.fonts.navButton,
+                            fontWeight: 500,
+                            filter: disabled ? "blur(2px)" : "none",
+                            opacity: disabled ? 0.7 : 1,
+                            transition:
+                                "filter .6s, text-shadow .6s, opacity .6s",
+                            fontSize: idx == 1 ? "2rem" : "1.05rem",
+                            fontFeatureSettings:
+                                idx == 1 ? `"case", "${styleSet}"` : "",
+                        }}
+                    >
+                        {part}
+                    </Typography>
+                ))}
+            </Stack>
         </Box>
     );
 }
@@ -274,20 +290,21 @@ function NavModal({ canGoBack, canGoNext, onBack, onNext, onClose }) {
             }}
         >
             <NavBtn
-                label="p←evious"
+                label={["p", "←", "evious"]}
                 onClick={onBack}
                 disabled={!canGoBack}
             />
             <NavBtn
-                label="nex→"
+                label={["nex", "→"]}
                 onClick={onNext}
                 disabled={!canGoNext}
             />
             <Box sx={{ position: "absolute", right: 0 }}>
                 <NavBtn
-                    label="clOse"
+                    label={["cl", "0", "se"]}
                     onClick={onClose}
                     disabled={false}
+                    styleSet="ss02"
                 />
             </Box>
         </Box>

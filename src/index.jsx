@@ -12,6 +12,7 @@ import PageScroller from "./ui/PageScroller";
 import SVGNoiseBackground from "./ui/SVGNoiseBackground.jsx";
 
 import { ThemeProvider, CssBaseline } from "@mui/material";
+
 import theme from "./ui/theme.js";
 
 const root = ReactDOM.createRoot(document.querySelector("#root"));
@@ -21,7 +22,6 @@ function AppWrapper() {
     const landing = useStore((state) => state.landing);
     const selectedId = useStore((state) => state.selectedId);
     const fxIntro = useStore((state) => state.fxIntro);
-    const closeEntry = useStore((state) => state.closeEntry);
 
     const opacityApp = landing ? 0 : selectedId != null ? 0.4 : 1;
 
@@ -38,8 +38,10 @@ function AppWrapper() {
                 style={{
                     visibility: landing ? `hidden` : `visible`,
                     opacity: opacityApp,
-                    filter: `blur(${selectedId != null ? 10 : 0}px)`,
-                    transition: `opacity ${fxIntro.app}s ease-in-out, filter .3s `,
+                    filter: `blur(${
+                        landing ? 100 : selectedId != null ? 10 : 0
+                    }px)`,
+                    transition: `opacity ${fxIntro.app}s ease-in-out, filter 2s `,
                     position: `absolute`,
                     top: 0,
                     left: 0,

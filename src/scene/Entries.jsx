@@ -12,6 +12,7 @@ export default function Entries({
     size = 10,
     color,
     uv = { x: [0.2, 0.8], y: [0.2, 0.8] },
+    defaultPosition = null,
 }) {
     const seed = useMemo(() => Math.floor(Math.random() * 1000), []);
     const geometry = useStore((state) => state.uvmap);
@@ -40,11 +41,19 @@ export default function Entries({
             const sprite = spriteRefs.current[i];
             if (!sprite) continue;
 
-            sprite.position.set(
-                posAttr.getX(index),
-                posAttr.getY(index),
-                posAttr.getZ(index)
-            );
+            if (data[i].position == null) {
+                sprite.position.set(
+                    posAttr.getX(index),
+                    posAttr.getY(index),
+                    posAttr.getZ(index)
+                );
+            } else {
+                sprite.position.set(
+                    data[i].position[0],
+                    data[i].position[1],
+                    data[i].position[2]
+                );
+            }
         }
     });
 

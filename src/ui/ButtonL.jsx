@@ -1,9 +1,11 @@
 import { Typography, Box } from "@mui/material";
-import { useState, useRef, useEffect, use } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useTheme } from "@mui/material/styles";
 import { createPortal } from "react-dom";
 
-import { glowTextFx } from "../utils";
+import StylizedCharacters from "./StylizedCharacters";
+
+import { glowTextFx, randomStyle } from "../utils";
 
 export default function ButtonL({
     label,
@@ -46,18 +48,21 @@ export default function ButtonL({
         }
     }, [drop]);
 
-    const sharedS = {
-        fontSize: "2rem",
-        lineHeight: "2.5rem",
-        textTransform: "uppercase",
-        textAlign: textAlign,
-        // backgroundColor: "blue",
-        m: 0,
-        color: theme.colors.black.main,
-        transition: `all ${animS}s ease-in-out`,
-        pointerEvents: drop ? "auto" : "none",
-        fontFamily: theme.fonts.button,
-    };
+    const sharedS = useMemo(
+        () => ({
+            fontSize: "2rem",
+            lineHeight: "2.5rem",
+            textTransform: "uppercase",
+            textAlign: textAlign,
+            m: 0,
+            color: theme.colors.black.main,
+            transition: `all ${animS}s ease-in-out`,
+            pointerEvents: drop ? "auto" : "none",
+            fontFamily: theme.fonts.clean,
+            // fontFeatureSettings: "ss03" 1,
+        }),
+        []
+    );
 
     const frontS = {
         fontWeight: selected || hovered ? 400 : 400,
@@ -77,16 +82,23 @@ export default function ButtonL({
         width: coords.width,
         height: coords.height,
         transform: drop ? "translateY(0%)" : "translateY(-20%)",
-        // fontWeight: selected || hovered ? 400 : 700,
         filter: drop && !(selected || hovered) ? "blur(2px)" : "blur(1px)",
-        // zIndex: 1000,
-        // opacity: drop && !(selected || hovered) ? 0.8 : 0,
         opacity: drop ? 0.8 : 0,
         textShadow:
             drop && !(selected || hovered)
                 ? glowTextFx("2px", theme.colors.grey.darker, "2px")
                 : glowTextFx("0.1px", theme.colors.white.main, "2px"),
     };
+
+    const labelFx = useMemo(() => {
+        return (
+            <StylizedCharacters
+                label={label}
+                percentage={0.5}
+                seed={Math.random() * 1000}
+            />
+        );
+    }, [label]);
 
     return (
         <>
@@ -112,7 +124,7 @@ export default function ButtonL({
                     onClick={handleClick}
                     className="clickable"
                 >
-                    {label}
+                    {labelFx}
                 </Typography>
             </Box>
 
@@ -125,7 +137,7 @@ export default function ButtonL({
                             ...blurStyle,
                         }}
                     >
-                        {label}
+                        {labelFx}
                     </Typography>,
                     document.getElementById("blurLayer")
                 )}

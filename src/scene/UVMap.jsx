@@ -1,7 +1,5 @@
 import { useMemo, useRef, useEffect, useState } from "react";
-import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { Line, Edges } from "@react-three/drei";
 import { latLonToXYZ, mirrorPt, interpolateTriple } from "../utils.js";
 
 import { useStore } from "../store/useStore.jsx";
@@ -61,58 +59,12 @@ export default function UVMap({
         useStore.setState({ uvmap: meshRef.current.geometry.clone() });
     }, [u, vertices]);
 
-    // Update uniform time on each frame
-    // useFrame((state) => {
-    //     if (meshRef.current) {
-    //         meshRef.current.material.uniforms.time.value =
-    //             state.clock.elapsedTime;
-    //     }
-    // });
-
-    // Create shader material manually
-    // const material = new THREE.ShaderMaterial({
-    //     uniforms: {
-    //         time: { value: 0 },
-    //     },
-    //     vertexShader: `
-    //       varying vec2 vUv;
-    //       void main() {
-    //         vUv = uv;
-    //         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    //       }
-    //     `,
-    //     fragmentShader: `
-    //       varying vec2 vUv;
-    //       uniform float time;
-
-    //       // Simple random function
-    //       float random(vec2 st) {
-    //         return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
-    //       }
-
-    //       void main() {
-    //         // First noise based on UV and time
-    //         float n1 = random(vUv * 10.0 + time * 0.5);
-    //         // Second noise with a different scale
-    //         float n2 = random(vUv * 30.0 - time * 0.2);
-
-    //         // Multiply them together
-    //         float blended = n1 * n2;
-
-    //         gl_FragColor = vec4(vec3(blended), 1.0);
-    //       }
-    //     `,
-    // });
-
     return (
         <>
             <mesh
                 ref={meshRef}
                 geometry={geometry}
                 visible={false}
-                // material={material}
-                // material-transparent={true}
-                // material-opacity={0.2}
             ></mesh>
         </>
     );

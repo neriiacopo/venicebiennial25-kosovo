@@ -1,15 +1,12 @@
-import { useEffect, useState, useRef } from "react";
-import { Suspense } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { AsciiRenderer } from "@react-three/drei";
 import gsap from "gsap";
 
 import Grid from "./GridArrow.jsx";
-// import Globe from "./Globe.jsx";
 import Globe from "./Globe.jsx";
 import UVMap from "./UVMap.jsx";
 import Entries from "./Entries.jsx";
-import VerticalCircle from "./VerticalCircle.jsx";
-import Trails from "./Trails.jsx";
+import Trail from "./Trail.jsx";
 import DevControllers from "./DevControllers.jsx";
 
 import { useStore } from "../store/useStore.jsx";
@@ -19,6 +16,7 @@ export default function SceneContent() {
     const globe = useStore((state) => state.globe); // globe or map
 
     const db = useStore((state) => state.db);
+    const trails = useStore((state) => state.trails);
     const scales = useStore((state) => state.scales);
 
     const [u, setU] = useState(0.4); // transition control
@@ -54,17 +52,22 @@ export default function SceneContent() {
             <Grid u={u} />
             <UVMap u={u} />
             <Globe u={u} />
-            {/* <Trails u={u} /> */}
 
-            {/* {scale == "xs" && (
-                <VerticalCircle
-                    r={globe.radius * 2}
-                    position={[0, globe.radius, 0]}
-                    scale={2 - u}
-                    lineWidth={u}
-                    color={"black"}
-                />
-            )} */}
+            {scale == "xl" &&
+                trails &&
+                trails.map((bird, i) => {
+                    const active = ["Sharri", "Pashtrik"].includes(bird.name);
+                    return (
+                        <Trail
+                            key={i}
+                            data={bird.positions}
+                            name={bird.name}
+                            thickness={active ? 2 : 1}
+                            dashed={!active}
+                        />
+                    );
+                })}
+
             {db?.length &&
                 scales.map((scale, i) => (
                     <Entries
@@ -75,7 +78,7 @@ export default function SceneContent() {
                         uv={
                             [
                                 { x: [0.3, 0.7], y: [0.3, 0.7] },
-                                { x: [0.3, 0.7], y: [0.2, 0.8] },
+                                { x: [0.3, 0.7], y: [0.3, 0.7] },
                                 { x: [0.1, 0.9], y: [0.35, 0.55] },
                             ][i]
                         }
