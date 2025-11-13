@@ -1,32 +1,36 @@
-Architect and Curator  
+## Architect/Exhibitor and Curator
+
 Erzë Dinarama
 
-Commissioner  
+## Commissioner
+
 The National Gallery of Kosovo
 
-Organiser  
-Ministry of Culture, Youth and Sport of  
-the Republic of Kosovo
+## Organiser
 
-Collaborators:
+Ministry of Culture, Youth and Sport of the Republic of Kosovo
 
-Farmers and Agronomists  
+## Collaborators:
+
+Farmers and Agronomists
 Medih Bresilla  
 Muharrem Hoti  
-Imer Duraku  
-Viton Krasniqi  
+Imer DurakuViton Krasniqi  
 Gazmend Daka
 
-Smell Artist:  
+Smell Researcher and Artist  
 Sissel Tolaas
 
-Design and Research:  
+Design and Research  
 Betim Bresilla – Soil Consultant  
 Irina Bogdan – Exhibition Design  
 Rinë Dinarama – Research and Design  
 Manson Fung – Research and Design  
 Luca Longagnani – Exhibition Design  
-Rreze Kurteshi – Fieldwork Research  
+Rreze Kurteshi – Fieldwork Assistance  
+Bardha Pireva - Fieldwork Support  
+Duarza Ivanja - Fieldwork Support  
+Irena Llapashtica - Fieldwork Support  
 Marie Petrault – Research  
 Konstantinos Venis – Research
 
@@ -45,13 +49,23 @@ Iacopo Prinetti
 Exhibition Design  
 Sub
 
+Light Design  
+Studio Barthelemes: Andreas Barthelemes, Juan Carlos Mirson
+
 Graphic Design  
-Atelier Brenda (Nana Esi & Sophie Keij)
+Atelier Brenda (Nana Esi \& Sophie Keij)
 
 Graphic Assistance  
-Aaron & Antonia & Tine
+Aaron \& Antonia \& Tine
 
 Production and Installation  
 We Exhibit
 
-Smell research support
+Smell research support  
+Symrise France
+
+Public Relations and Communications  
+Close Encounters \& Pickles PR
+
+Creative Communications Officer  
+Rina Meta

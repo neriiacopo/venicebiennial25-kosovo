@@ -22,7 +22,7 @@ export default function MarkdownPage({ title, path }) {
 
     return (
         <>
-            <Typography
+            {/* <Typography
                 variant="h2"
                 sx={{
                     pt: "20vh",
@@ -32,28 +32,52 @@ export default function MarkdownPage({ title, path }) {
                     // fontFeatureSettings: `"ss0${randomStyle()}" 1`,
                 }}
             >
-                <StylizedCharacters
+                {/* <StylizedCharacters
                     label={title}
                     percentage={0.8}
                     seed={Math.random() * 1000}
-                />
-            </Typography>
+                /> 
+            </Typography> */}
             <ReactMarkdown
                 components={{
-                    h2: ({ node, ...props }) => (
+                    h1: ({ node, ...props }) => (
                         <Typography
-                            variant="h4"
-                            {...props}
+                            variant="h2"
                             sx={{
-                                mt: theme.bannerH,
+                                pt: "20vh",
+                                mb: theme.bannerH,
+                                textTransform: "uppercase",
+
+                                // fontFeatureSettings: `"ss0${randomStyle()}" 1`,
                             }}
                         >
                             <StylizedCharacters
                                 label={props.children}
-                                percentage={0.5}
+                                percentage={0.8}
                                 seed={Math.random() * 1000}
                             />
                         </Typography>
+                    ),
+                    h2: ({ node, ...props }) => (
+                        <div
+                            sx={{
+                                mt: theme.bannerH,
+                            }}
+                        >
+                            <Typography
+                                variant="h4"
+                                {...props}
+                                // sx={{
+                                //     mt: theme.bannerH,
+                                // }}
+                            >
+                                <StylizedCharacters
+                                    label={props.children}
+                                    percentage={0.5}
+                                    seed={Math.random() * 1000}
+                                />
+                            </Typography>
+                        </div>
                     ),
 
                     strong: ({ node, ...props }) => (

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Sphere } from "@react-three/drei";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 
 import { latLonToXYZ } from "../utils.js";
 
@@ -15,50 +15,47 @@ export default function Globe({ u, offset = 0.1 }) {
 
     const texture = useLoader(TextureLoader, texturePath);
 
-    const material = useMemo(
-        () =>
-            new THREE.ShaderMaterial({
-                uniforms: {
-                    uTexture: { value: texture },
-                    uBlend: { value: 0.5 },
-                },
-                vertexShader: `
+    const material = useMemo(() => {
+        return new THREE.ShaderMaterial({
+            uniforms: {
+                uTexture: { value: texture },
+                uBlend: { value: 0.5 },
+                uOpacity: { value: 1.0 },
+            },
+            vertexShader: `
         varying vec2 vUv;
         void main() {
           vUv = uv;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
       `,
-                fragmentShader: `
+            fragmentShader: `
         varying vec2 vUv;
         uniform sampler2D uTexture;
         uniform float uBlend;
+        uniform float uOpacity;
 
         void main() {
           vec4 texColor = texture2D(uTexture, vUv);
-
-          // Blend texture color with black
           vec3 finalColor = mix(texColor.rgb, vec3(0.0), uBlend);
-
-          gl_FragColor = vec4(finalColor, texColor.a);
+          gl_FragColor = vec4(finalColor, texColor.a * uOpacity);
         }
       `,
-                transparent: true,
-            }),
-        [texture]
-    );
+            transparent: true,
+        });
+    }, [texture]);
+
+    // Update opacity when `u` changes
+    useEffect(() => {
+        material.uniforms.uOpacity.value = 1 - u * 2;
+    }, [u, material]);
 
     return (
-        <group opacity={1 - u * 2}>
+        <group>
             <Sphere
                 args={[r - offset, 100, 100]}
-                scale={[1, 1, 1]}
-                position={[0, r, 0]}
                 material={material}
-                // material-color={"black"}
-                // material-transparent={true}
-                // material-opacity={1}
-                // material-map={texture}
+                position={[0, r, 0]}
                 rotation={[Math.PI / 2, -Math.PI / 2, 0]}
             />
         </group>
