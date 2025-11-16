@@ -9,7 +9,7 @@ const isCloudflare = process.env.CLOUDFLARE_PAGES === "true";
 
 export default defineConfig({
     plugins: [react(), topLevelAwait()],
-    root: "src",
+    root: ".",
     publicDir: "public",
     base: isCloudflare ? "/" : "/venicebiennial25-kosovo/",
     server: {
@@ -17,7 +17,7 @@ export default defineConfig({
         open: !isCodeSandbox,
     },
     build: {
-        outDir: "../dist",
+        outDir: "./dist",
         emptyOutDir: true,
         sourcemap: true,
     },

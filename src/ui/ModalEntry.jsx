@@ -190,11 +190,7 @@ export default function ModalEntry() {
                                                 "linear-gradient(to top, black 75%, rgb(0,0,0,0.1) 90%)",
                                         }}
                                     >
-                                        <MarkdownPage
-                                            key={selectedId} // Force Markdown reset
-                                            title={entry.title}
-                                            path={`data/mds/${entry.text}.md`}
-                                        />
+                                        <MarkdownPage entry={entry} />
                                     </Box>
                                 </Box>
                             </>

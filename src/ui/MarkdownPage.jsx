@@ -8,36 +8,20 @@ import { randomStyle } from "../utils";
 
 import { useTheme } from "@mui/material";
 
-export default function MarkdownPage({ title, path }) {
+export default function MarkdownPage({ title, path, entry }) {
     const theme = useTheme();
     const [content, setContent] = useState(null);
 
     useEffect(() => {
-        fetch(path)
+        fetch(`data/mds/${entry.text}.md`)
             .then((res) => res.text())
             .then((text) => setContent(text));
-    }, []);
+    }, [entry]);
 
     if (!content) return <CircularProgress />;
 
     return (
         <>
-            {/* <Typography
-                variant="h2"
-                sx={{
-                    pt: "20vh",
-                    mb: theme.bannerH,
-                    textTransform: "uppercase",
-
-                    // fontFeatureSettings: `"ss0${randomStyle()}" 1`,
-                }}
-            >
-                {/* <StylizedCharacters
-                    label={title}
-                    percentage={0.8}
-                    seed={Math.random() * 1000}
-                /> 
-            </Typography> */}
             <ReactMarkdown
                 components={{
                     h1: ({ node, ...props }) => (

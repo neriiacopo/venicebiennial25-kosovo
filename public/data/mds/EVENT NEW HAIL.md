@@ -1,0 +1,3 @@
+# EVENT NEW HAIL
+
+In recent years, hailstorms have been occurring more frequently, and the timing of hail has shifted — now striking later or earlier in the season, and in regions where they never used to occur. One of the farmers from Lipjan specifically chose his planting site because, historically, hail had never been recorded there. Local villagers told him they had never witnessed hail in that area.

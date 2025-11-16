@@ -28,7 +28,9 @@ export default function App() {
                     const path = `data/${item.folder}/${item.image}.${item.extension}`;
 
                     if (
-                        ["png", "jpg", "jpeg", "webp"].includes(item.extension)
+                        ["png", "jpg", "jpeg", "webp", "JPG"].includes(
+                            item.extension
+                        )
                     ) {
                         try {
                             const texture = await new Promise(
@@ -68,7 +70,7 @@ export default function App() {
                             };
                         }
                     } else if (
-                        ["mp4", "webm", "mov"].includes(item.extension)
+                        ["mp4", "webm", "mov", "MOV"].includes(item.extension)
                     ) {
                         const video = document.createElement("video");
                         video.src = path;
@@ -175,6 +177,8 @@ export default function App() {
                 trails: reducedTrails,
                 birdCenter: getCenterLastPositions(lastLatLons),
             });
+
+            console.log(reducedTrails);
             setReady(true);
         }
 
