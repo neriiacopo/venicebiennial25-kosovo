@@ -16,7 +16,6 @@ export default function Entries({
     const geometry = useStore((state) => state.uvmap);
     const spriteRefs = useRef([]);
     const openEntry = useStore((state) => state.openEntry);
-    console.log(data);
 
     // Select vertex indices using UV domain
     const idx = useMemo(() => {

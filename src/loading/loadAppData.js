@@ -40,7 +40,6 @@ export default async function loadData() {
                     const image = texture.image;
                     const aspectRatio = image?.width / image?.height || 1;
 
-                    console.log(texture);
                     return {
                         ...item,
                         id: i,
