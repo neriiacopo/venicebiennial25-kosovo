@@ -5,6 +5,13 @@ import { useStore } from "../store/useStore";
 const isMac = /Mac|iPhone|iPad|iPod/i.test(navigator.platform);
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
+// TO CHECKs
+const isMobile =
+    /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent) ||
+    (typeof window !== "undefined" &&
+        window.matchMedia &&
+        window.matchMedia("(pointer: coarse)").matches);
+
 export default function PageScroller({ scroll }) {
     const introH = useStore((s) => s.introH);
     const scales = useStore.getState().scales;

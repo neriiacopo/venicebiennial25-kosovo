@@ -11,7 +11,7 @@ export default function Entries({
     scale,
     size = 10,
     color,
-    uv = { x: [0.2, 0.8], y: [0.2, 0.8] },
+    uv = { x: [0.2, 0.7], y: [0.2, 0.7] },
     defaultPosition = null,
 }) {
     const seed = useMemo(() => Math.floor(Math.random() * 1000), []);

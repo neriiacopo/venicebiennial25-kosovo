@@ -1,22 +1,16 @@
 import { useProgress, Html } from "@react-three/drei";
-import { useTheme } from "@mui/material/styles";
+import { useLoadingStore } from "../store/loadingStore";
 
 export default function Loader() {
-    const theme = useTheme();
-    const { progress } = useProgress();
+    const { progress: dreiProgress } = useProgress();
+    const dataProgress = useLoadingStore((s) => s.dataProgress);
+
+    // Weighted or simple average:
+    const combined = Math.round(dataProgress * 0.6 + dreiProgress * 0.4);
 
     return (
         <Html center>
-            <div
-                style={{
-                    fontFamily: theme.fonts.button,
-                    fontSize: "1.2rem",
-                    color: "black",
-                    textAlign: "center",
-                }}
-            >
-                loading {progress.toFixed(0)}%
-            </div>
+            <div>loading {combined}%</div>
         </Html>
     );
 }

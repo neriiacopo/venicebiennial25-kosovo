@@ -1,4 +1,4 @@
-## Architect/Exhibitor and Curator
+## Exhibitor and Curator
 
 Erzë Dinarama
 
@@ -15,7 +15,9 @@ Ministry of Culture, Youth and Sport of the Republic of Kosovo
 Farmers and Agronomists
 Medih Bresilla  
 Muharrem Hoti  
-Imer DurakuViton Krasniqi  
+Imer Duraku
+
+Viton Krasniqi  
 Gazmend Daka
 
 Smell Researcher and Artist  
@@ -53,10 +55,7 @@ Light Design
 Studio Barthelemes: Andreas Barthelemes, Juan Carlos Mirson
 
 Graphic Design  
-Atelier Brenda (Nana Esi \& Sophie Keij)
-
-Graphic Assistance  
-Aaron \& Antonia \& Tine
+Atelier Brenda: Nana Esi \& Sophie Keij
 
 Production and Installation  
 We Exhibit
@@ -69,3 +68,4 @@ Close Encounters \& Pickles PR
 
 Creative Communications Officer  
 Rina Meta
+

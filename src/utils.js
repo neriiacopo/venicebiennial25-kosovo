@@ -93,6 +93,30 @@ export async function fetchTrailData(urlPath, globe = {}, maxPoints = 500) {
     return reducedTrails;
 }
 
+export function createResource(promise) {
+    let status = "pending";
+    let result;
+
+    const suspender = promise.then(
+        (r) => {
+            status = "success";
+            result = r;
+        },
+        (e) => {
+            status = "error";
+            result = e;
+        }
+    );
+
+    return {
+        read() {
+            if (status === "pending") throw suspender;
+            if (status === "error") throw result;
+            return result;
+        },
+    };
+}
+
 // Scene utilities -------------------------------------------------------------------------------------
 
 export function getCenterLastPositions(lastLatLons) {
@@ -116,6 +140,20 @@ export function getCenterLastPositions(lastLatLons) {
 export function seededRandom(seed) {
     let x = Math.sin(seed++) * 10000;
     return x - Math.floor(x);
+}
+
+export function jitter(radius = 1.5) {
+    const angle = Math.random() * Math.PI * 2;
+    const dist = radius * Math.sqrt(Math.random());
+    return {
+        x: (Math.cos(angle) + 1) * dist,
+        y: (Math.sin(angle) + 1) * dist,
+        z: 0,
+    };
+}
+
+export function flipLon(x) {
+    return x < 180 ? -(180 - x) : 180 - x;
 }
 
 export function seededShuffle(array, seed) {

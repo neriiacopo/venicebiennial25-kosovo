@@ -1,3 +1,4 @@
-# Shifting environmental cues
+## Shifting environmental cues
 
 The first part of the title, Lulebora Nuk Çelë Më (Snowdrop Blooms No More), references a once-reliable seasonal marker — the snowdrop, traditionally one of the first flowers to bloom after winter, signaling spring’s arrival. A farmer from Krusha, Kosovo, remarked that he no longer sees Lulebora. The truth of his observation matters less than what this statement signals — a growing disorientation in reading the land. These long-trusted environmental cues are shifting or disappearing altogether, leaving communities who rely on them — especially those in close, daily interaction with the land — in a state of uncertainty, unable to interpret or anticipate seasonal rhythms as they once did.
+

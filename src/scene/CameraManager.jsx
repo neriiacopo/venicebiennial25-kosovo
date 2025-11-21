@@ -22,7 +22,7 @@ export default function CameraController() {
     const targetPan = useRef({ x: 0, y: 0 });
     const targetAngle = useStore((state) => state.birdCenter);
 
-    const centerTrackBall = useStore((state) => state.birdCenter);
+    const centerTrackBall = useStore((state) => state.birdCenter || pristina);
     const currentAngle = useRef({ lon: 0, lat: 0 });
 
     // Initial camera position

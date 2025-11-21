@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export let useStore = create((set, get) => ({
-    ready: false,
+    ready: true,
     landing: true,
     fxIntro: { landing: 2, app: 1 },
     blurTitle: false,

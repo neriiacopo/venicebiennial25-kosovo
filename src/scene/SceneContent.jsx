@@ -10,8 +10,14 @@ import Trail from "./Trail.jsx";
 import DevControllers from "./DevControllers.jsx";
 
 import { useStore } from "../store/useStore.jsx";
+import loadAppData from "../loading/loadAppData.js";
+import loadData from "../loading/loadAppData.js";
 
 export default function SceneContent() {
+    useEffect(() => {
+        loadData();
+    }, []);
+
     const scale = useStore((state) => state.scale);
     const globe = useStore((state) => state.globe); // globe or map
 
@@ -53,7 +59,8 @@ export default function SceneContent() {
             <UVMap u={u} />
             <Globe u={u} />
 
-            {scale == "xl" &&
+            {db?.length &&
+                scale == "xl" &&
                 trails &&
                 trails.map((bird, i) => {
                     const active = ["Sharri", "Pashtrik"].includes(bird.name);
@@ -78,7 +85,7 @@ export default function SceneContent() {
                         uv={
                             [
                                 { x: [0.3, 0.7], y: [0.3, 0.7] },
-                                { x: [0.3, 0.7], y: [0.3, 0.7] },
+                                { x: [0.3, 0.7], y: [0.2, 0.8] },
                                 { x: [0.1, 0.9], y: [0.35, 0.55] },
                             ][i]
                         }

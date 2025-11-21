@@ -1,5 +1,3 @@
-# Smell Calendar Instructions
-
 ## How to Engage with the Relational Calendar?
 
 The installation represents a relational calendar, organized around ecological thresholds.
@@ -16,3 +14,4 @@ Wait for the smells to arrive; they will come to you.
 Attend to the slow, almost imperceptible rhythms that shape the land and those who live with it.
 
 This calendar privileges presence over prediction, and proximity over distance, inviting you into an embodied encounter with ecological time.
+
