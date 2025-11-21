@@ -25,7 +25,7 @@ export async function excelToJson(urlPath) {
 
     // Process _ columns and renamed them
     const underscoreCols = headers.filter(
-        (h) => typeof h === "string" && h.startsWith("_")
+        (h) => typeof h === "string" && h.startsWith("_"),
     );
     const renamedCols = underscoreCols.map((h) => h.replace("_", ""));
 
@@ -69,7 +69,7 @@ export async function fetchTrailData(urlPath, globe = {}, maxPoints = 500) {
         const lastLatLon = data[data.length - 1];
 
         const positions = data.map((d, i) =>
-            latLonToXYZ([d.lat, 0, d.lon], globe.radius + 1, globe.center)
+            latLonToXYZ([d.lat, 0, d.lon], globe.radius + 1, globe.center),
         );
 
         const reduced = [];
@@ -105,7 +105,7 @@ export function createResource(promise) {
         (e) => {
             status = "error";
             result = e;
-        }
+        },
     );
 
     return {
@@ -127,7 +127,7 @@ export function getCenterLastPositions(lastLatLons) {
             acc[2] += pos[2];
             return acc;
         },
-        [0, 0, 0]
+        [0, 0, 0],
     );
 
     const center = lastLatLons.length
@@ -312,7 +312,7 @@ export function latLonToXYZ(
     p,
     radius = 100,
     center = [0, 0, 0],
-    rotation = [90, 0, 0]
+    rotation = [90, 0, 0],
 ) {
     const polar = [
         radius *
@@ -331,7 +331,7 @@ export function latLonToXYZ(
 
 export function mirrorPt(p, plane = [x, y, z]) {
     return p.map((coord, i) =>
-        plane[i] != null ? plane[i] - (coord - plane[i]) : coord
+        plane[i] != null ? plane[i] - (coord - plane[i]) : coord,
     );
 }
 

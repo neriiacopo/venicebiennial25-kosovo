@@ -20,6 +20,7 @@ export let useStore = create((set, get) => ({
     activeNarratives: [],
 
     noisePattern: null,
+    mobilePressed: false,
 
     globe: {
         radius: 100,

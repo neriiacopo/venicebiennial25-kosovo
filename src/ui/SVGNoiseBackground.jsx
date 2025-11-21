@@ -7,6 +7,8 @@ export default function StaticNoiseBackground() {
     const theme = useTheme();
     const [noiseA, setNoiseA] = useState(null);
     const [noiseB, setNoiseB] = useState(null);
+    const isMobile = useStore((state) => state.isMobile);
+    const mobilePressed = useStore((state) => state.mobilePressed);
 
     useEffect(() => {
         generateNoiseBase64({ baseFrequency: 0.99 }).then(setNoiseA);
@@ -17,7 +19,14 @@ export default function StaticNoiseBackground() {
         if (noiseA || noiseB) {
             useStore.setState({ blurTitle: true });
         }
-    }, [noiseA, noiseB]);
+    }, [noiseA, noiseB, mobilePressed]);
+
+    useEffect(() => {
+        useStore.setState({ blurTitle: false });
+        setTimeout(() => {
+            useStore.setState({ blurTitle: true });
+        }, 100);
+    }, [mobilePressed]);
 
     useEffect(() => {
         if (noiseB) {
@@ -34,8 +43,8 @@ export default function StaticNoiseBackground() {
                     top: 0,
                     left: 0,
                     width: "100vw",
-                    height: "100vh",
-                    pointerEvents: "none",
+                    height: "100dvh",
+                    pointerEvents: isMobile ? "auto" : "none",
                     zIndex: 3,
                     filter: "grayscale(1)",
                     backgroundImage: `url(${noiseA})`,
@@ -43,6 +52,15 @@ export default function StaticNoiseBackground() {
                     mixBlendMode: "color-dodge",
                     opacity: noiseA ? 0.8 : 0,
                     transition: "opacity 0.3s ease-in-out",
+                }}
+                onTouchStart={(e) => {
+                    isMobile && useStore.setState({ mobilePressed: true });
+                }}
+                onTouchEnd={(e) => {
+                    isMobile && useStore.setState({ mobilePressed: false });
+                }}
+                onTouchCancel={(e) => {
+                    isMobile && useStore.setState({ mobilePressed: false });
                 }}
             />
             <div
@@ -52,7 +70,7 @@ export default function StaticNoiseBackground() {
                     top: 0,
                     left: 0,
                     width: "100vw",
-                    height: "100vh",
+                    height: "100dvh",
                     pointerEvents: "none",
                     zIndex: 1,
                 }}
@@ -65,7 +83,7 @@ export default function StaticNoiseBackground() {
                     top: 0,
                     left: 0,
                     width: "100vw",
-                    height: "100vh",
+                    height: "100dvh",
                     pointerEvents: "none",
                     zIndex: -10,
                     filter: "grayscale(1)",
@@ -83,7 +101,7 @@ export default function StaticNoiseBackground() {
                     top: 0,
                     left: 0,
                     width: "100vw",
-                    height: "100vh",
+                    height: "100dvh",
                     pointerEvents: "none",
                     zIndex: -100,
                     backgroundColor: theme.colors.white.lightest,

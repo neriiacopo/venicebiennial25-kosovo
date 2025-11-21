@@ -25,28 +25,6 @@ export default function NavPages() {
         }
     }
 
-    function ButtonS({ label, onClick }) {
-        return (
-            <Typography
-                sx={{
-                    textTransform: "none",
-                    textDecoration: "underline",
-                    textDecorationThickness: "1px",
-                    textAlign: "left",
-                    m: 0,
-                    pr: 2,
-                    pointerEvents: "auto",
-                    backgroundColor: "transparent",
-                    fontSize: "1.05rem",
-                }}
-                onClick={onClick}
-                className="clickable"
-            >
-                {label}
-            </Typography>
-        );
-    }
-
     return (
         <>
             <Box
@@ -124,6 +102,130 @@ export default function NavPages() {
                     );
                 })}
             </Box>
+
+            <PastEditionsBox />
         </>
+    );
+}
+
+function ButtonS({ label, onClick = null, clean = false }) {
+    return (
+        <Typography
+            sx={{
+                textTransform: "none",
+                textDecoration: clean ? "none" : "underline",
+                textDecorationThickness: "1px",
+                textAlign: "left",
+                m: 0,
+                pr: clean ? 0 : 2,
+                pointerEvents: "auto",
+                backgroundColor: "transparent",
+                fontSize: "1.05rem",
+            }}
+            onClick={onClick}
+            className="clickable"
+        >
+            {label}
+        </Typography>
+    );
+}
+
+///// EXTRA
+import StylizedCharacters from "./StylizedCharacters";
+
+function PastEditionsBox({ w = "15%" }) {
+    const landing = useStore((state) => state.landing);
+    const theme = useTheme();
+    const fxIntro = useStore((state) => state.fxIntro);
+
+    const opacity = landing ? 1 : 0;
+    const links = [
+        {
+            id: 0,
+            label: "2019",
+            url: "2019.pavilionofkosovo.com",
+        },
+        {
+            id: 1,
+            label: "2022",
+            url: "2022.pavilionofkosovo.com",
+        },
+        {
+            id: 2,
+            label: "2023",
+            url: "2023.pavilionofkosovo.com",
+        },
+        {
+            id: 3,
+            label: "2024",
+            url: "2024.pavilionofkosovo.com",
+        },
+    ];
+
+    return (
+        <Box
+            sx={{
+                position: "absolute",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                alignItems: "flex-end",
+                textAlign: "right",
+                mt: 16,
+                mb: 2,
+                width: w,
+                top: "5vw",
+                right: 0,
+                p: 4,
+                opacity: opacity,
+                transition: `opacity ${fxIntro.landing}s ease-in-out`,
+
+                zIndex: 1000,
+            }}
+        >
+            <ButtonS
+                label="Previous Editions"
+                onClick={() => {}}
+                clean={true}
+            />
+            <Stack
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                    justifyContent: "flex-end",
+                    gap: 1,
+                }}
+            >
+                {links.map((n, index) => {
+                    return (
+                        <Typography
+                            key={index}
+                            variant="h6"
+                            component="a"
+                            href={"https://" + n.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{
+                                // display: "block",
+                                textDecoration: "underline",
+                                color: "inherit",
+
+                                cursor: "none",
+                            }}
+                            onClick={() => {}}
+                            className="clickable"
+                        >
+                            <StylizedCharacters
+                                label={n.label}
+                                percentage={0.5}
+                                seed={233}
+                            />
+                        </Typography>
+                    );
+                })}
+            </Stack>
+        </Box>
     );
 }

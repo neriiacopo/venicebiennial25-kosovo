@@ -18,40 +18,52 @@ import theme from "./ui/theme.js";
 const root = ReactDOM.createRoot(document.querySelector("#root"));
 root.render(<AppWrapper />);
 
+const isMobile =
+    /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent) ||
+    (typeof window !== "undefined" &&
+        window.matchMedia &&
+        window.matchMedia("(pointer: coarse)").matches);
+
 function AppWrapper() {
     const landing = useStore((state) => state.landing);
     const selectedId = useStore((state) => state.selectedId);
     const fxIntro = useStore((state) => state.fxIntro);
 
     const opacityApp = landing ? 0 : selectedId != null ? 0.4 : 1;
+    useStore.setState({ isMobile });
 
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
             {/* Extra */}
-            <Cursor />
-            <PageScroller scroll={landing} />
-            <Ui />
-            <Landing />
+            {!isMobile && (
+                <>
+                    <Cursor />
+                    <PageScroller scroll={landing} />
+                    <Ui />
+                    <Landing />
 
-            <div
-                style={{
-                    visibility: landing ? `hidden` : `visible`,
-                    opacity: opacityApp,
-                    filter: `blur(${
-                        landing ? 100 : selectedId != null ? 10 : 0
-                    }px)`,
-                    transition: `opacity ${fxIntro.app}s ease-in-out, filter 2s `,
-                    position: `absolute`,
-                    top: 0,
-                    left: 0,
-                    width: `100vw`,
-                    height: `100vh`,
-                    zIndex: 1,
-                }}
-            >
-                <App />
-            </div>
+                    <div
+                        style={{
+                            visibility: landing ? `hidden` : `visible`,
+                            opacity: opacityApp,
+                            filter: `blur(${
+                                landing ? 100 : selectedId != null ? 10 : 0
+                            }px)`,
+                            transition: `opacity ${fxIntro.app}s ease-in-out, filter 2s `,
+                            position: `absolute`,
+                            top: 0,
+                            left: 0,
+                            width: `100vw`,
+                            height: `100dvh`,
+                            zIndex: 1,
+                        }}
+                    >
+                        <App />
+                    </div>
+                </>
+            )}
+            {isMobile && <Landing />}
             <SVGNoiseBackground />
         </ThemeProvider>
     );
