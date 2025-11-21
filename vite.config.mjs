@@ -11,7 +11,7 @@ export default defineConfig({
     plugins: [react(), topLevelAwait()],
     root: ".",
     publicDir: "public",
-    base: isCloudflare ? "/" : "/venicebiennial25-kosovo/",
+    base: "/",
     server: {
         host: true,
         open: !isCodeSandbox,

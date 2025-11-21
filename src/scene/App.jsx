@@ -27,11 +27,6 @@ export default function App() {
         }
     }, [landing]);
 
-    // console.log("reading data!");
-    // const resource = getAppResource();
-    // resource.read();
-    // console.log("rendering scene!");
-
     return (
         <Canvas
             camera={{
@@ -42,17 +37,12 @@ export default function App() {
             }}
             id="canvas"
         >
-            <Suspense fallback={<Loader />}>
-                {/* <LoadAppDataSuspense /> */}
-                <group rotation={[-Math.PI / 2, 0, 0]}>
-                    <SceneContent />
-                    <CameraManager />
-                </group>
-            </Suspense>
+            {/* <Suspense fallback={<Loader />}> */}
+            <group rotation={[-Math.PI / 2, 0, 0]}>
+                <SceneContent />
+                <CameraManager />
+            </group>
+            {/* </Suspense> */}
         </Canvas>
     );
 }
-
-// function LoadAppDataSuspense() {
-//     throw loadAppData(); // <-- Suspends here
-// }

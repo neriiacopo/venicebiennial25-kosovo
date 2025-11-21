@@ -4,8 +4,6 @@ import { useFrame } from "@react-three/fiber";
 import { getIndicesInUvDomain, seededShuffle } from "../utils.js";
 import { useStore } from "../store/useStore.jsx";
 
-import GrayscaleSpriteMaterial from "./GrayscaleSpriteMaterial";
-
 export default function Entries({
     data = [],
     scale,
@@ -18,8 +16,7 @@ export default function Entries({
     const geometry = useStore((state) => state.uvmap);
     const spriteRefs = useRef([]);
     const openEntry = useStore((state) => state.openEntry);
-
-    const spriteBw = useStore((state) => state.spriteBw);
+    console.log(data);
 
     // Select vertex indices using UV domain
     const idx = useMemo(() => {

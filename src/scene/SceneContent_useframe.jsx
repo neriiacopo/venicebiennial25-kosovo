@@ -29,29 +29,44 @@ export default function SceneContent() {
     const [u, setU] = useState(0.4); // transition control
     const scaleFactors = useRef({ values: [0, 0, 0] });
 
-    // Transitions based on u
+    const uRef = useRef(u); // current
+    const targetURef = useRef(u); // target
+
+    const scaleTargetRef = useRef(scaleFactors.current.values.slice()); // target factors
+
     useEffect(() => {
-        const targetU = scale === "xl" ? 0 : scale === "m" ? 0.5 : 1;
-        gsap.to(
-            { u },
-            {
-                u: targetU,
-                duration: 2,
-                ease: "power3.out",
-                onUpdate: function () {
-                    setU(this.targets()[0].u);
-                },
-            }
-        );
-        gsap.to(scaleFactors.current.values, {
-            ...scales.reduce((acc, s, i) => {
-                acc[i] = s === scale ? 1 : 0;
-                return acc;
-            }, {}),
-            duration: 0.3,
-            ease: "power2.in",
-        });
+        // update target U
+        targetURef.current = scale === "xl" ? 0 : scale === "m" ? 0.5 : 1;
+
+        // update target scaleFactors (array like GSAP's reduce)
+        scaleTargetRef.current = scales.map((s) => (s === scale ? 1 : 0));
     }, [scale]);
+
+    useFrame((_, delta) => {
+        // --------- U interpolation ---------
+        // 2s duration → damping ~4 (feel free to tweak)
+        const dampingU = 4;
+        uRef.current = THREE.MathUtils.damp(
+            uRef.current,
+            targetURef.current,
+            dampingU,
+            delta
+        );
+        setU(uRef.current);
+
+        // --------- scaleFactors interpolation ---------
+        const dampingScale = 8; // matches gsap duration 0.3-ish
+        const arr = scaleFactors.current.values;
+
+        for (let i = 0; i < arr.length; i++) {
+            arr[i] = THREE.MathUtils.damp(
+                arr[i],
+                scaleTargetRef.current[i],
+                dampingScale,
+                delta
+            );
+        }
+    });
 
     return (
         <>
@@ -93,7 +108,6 @@ export default function SceneContent() {
                         size={[20, 20, 20][i] * scaleFactors.current.values[i]}
                         // size={[20, 20, 20][i]}
                     />
-                    // <></>
                 ))}
 
             <ambientLight />

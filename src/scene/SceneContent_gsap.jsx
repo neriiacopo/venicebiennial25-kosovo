@@ -93,7 +93,6 @@ export default function SceneContent() {
                         size={[20, 20, 20][i] * scaleFactors.current.values[i]}
                         // size={[20, 20, 20][i]}
                     />
-                    // <></>
                 ))}
 
             <ambientLight />
