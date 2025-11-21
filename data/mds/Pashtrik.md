@@ -1,6 +1,7 @@
-# PASHTRIKU
+## PASHTRIKU
 
 ## More-than-human calendar
+
 ## More-than-human temporalities
 
 Non-human entities—plants, insects, animals—navigate their environments through finely tuned ecological timings. When these timings shift, migrations no longer align with seasons, flowering no longer aligns with pollinators, and long-established cycles begin to fall out of sync.

@@ -1,0 +1,3 @@
+As you move through the olfactory events of this calendar, the Kosovan soil on the pavilion floor breathes its own timeline—layered temporalities that hold both the deep duration of geological formation and the immediate metabolic rhythms of microbial life. Here, time is not a neutral backdrop but a living, acting force, palpable in breath, scent, and decay.
+
+While the smells—recreated from farmers’ stories, translated through landscape memories, and chemically reconstructed—pass through multiple layers of mediation, the soil’s materiality remains physically present, speaking for itself without translation. It anchors the installation in an unmediated register, where matter, rather than representation, carries the narrative.
