@@ -1,1 +1,1 @@
-![image](https://github.com/user-attachments/assets/17b26345-3e3e-47a3-8f74-70950dead400)
+<img width="1919" height="1060" alt="Screenshot 2025-11-23 225017" src="https://github.com/user-attachments/assets/7d4a0911-140d-482e-989f-a4ce6f611120" />
