@@ -1,4 +1,6 @@
-Lulebora nuk çel më. Emerging Assemblages explores the disruption of deeply rooted ecological relationships and embodied knowledge systems under climate pressure—and possibilities for sense-making that emerge in a liminal space of uncertainty.
+## Lulebora nuk çel më
+
+Emerging Assemblages explores the disruption of deeply rooted ecological relationships and embodied knowledge systems under climate pressure—and possibilities for sense-making that emerge in a liminal space of uncertainty.
 
 Through fieldwork with Kosovo farmers, the project bears witness to a landscape in transition, as agricultural traditions encounter and adapt to new ecological realities. Shifting climate zones and changing seasonal rhythms have disrupted familiar environmental signals, putting situated, embodied forms of ecological knowledge at risk. At the same time, this uncertainty gives rise to new assemblages of human and non-human actors, knowledge practices, and material relations that emerge in response to altered ecological conditions. In these moments of systemic uncertainty, both the fragility and adaptability of existing knowledge arrangements is exposed.
 
@@ -13,4 +15,3 @@ These smells mingle with the living smellscape of the pavilion floor: a geologic
 The smells of this relational calendar are both aesthetic phenomena and critical sensory archive, carrying the latent histories and speculative futures of ecological change. Smell— intimately tied to the chemical life of soil, of plants, of atmospheric change—becomes a conduit for perceiving and feeling ecological change; immediate, affective, and irreducible. Each scent encountered becomes a temporal node—a trace of disappearing agricultural cycles, fading seasonal markers, and nascent ecosystems reshaped by climate volatility. In attuning to them, Emerging Assemblages invites us to rethink our modes of ecological perception—not as distant observers, but as implicated participants in an unstable, co-constituted world.
 
 Emerging Assemblages positions sensory engagement as a generative response to epistemological rupture—moments when dominant systems of knowledge fail, making space for new configurations of human and non-human relations to emerge. Where predictive models falter—reliant on quantifiable data and linear temporality—soil and smell insist on ways of knowing shaped by proximity, bodily entanglement, and the unruly sensory signals of a changing world.
-

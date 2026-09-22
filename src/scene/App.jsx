@@ -37,12 +37,12 @@ export default function App() {
             }}
             id="canvas"
         >
-            {/* <Suspense fallback={<Loader />}> */}
-            <group rotation={[-Math.PI / 2, 0, 0]}>
-                <SceneContent />
-                <CameraManager />
-            </group>
-            {/* </Suspense> */}
+            <Suspense fallback={<Loader />}>
+                <group rotation={[-Math.PI / 2, 0, 0]}>
+                    <SceneContent />
+                    <CameraManager />
+                </group>
+            </Suspense>
         </Canvas>
     );
 }

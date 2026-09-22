@@ -41,13 +41,13 @@ export default function Entries({
                 sprite.position.set(
                     posAttr.getX(index),
                     posAttr.getY(index),
-                    posAttr.getZ(index)
+                    posAttr.getZ(index),
                 );
             } else {
                 sprite.position.set(
                     data[i].position[0],
                     data[i].position[1],
-                    data[i].position[2]
+                    data[i].position[2],
                 );
             }
         }

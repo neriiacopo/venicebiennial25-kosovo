@@ -19,11 +19,23 @@ export default async function loadData() {
 
     setDataProgress(10);
 
+    // All 86 items below kick off in the same synchronous tick (Promise.all
+    // starts every download at once), so bumping progress when an item
+    // *starts* just fires 86 times back-to-back before anything has
+    // actually loaded -- the bar jumps straight to ~70% and then sits
+    // still. Bumping on *completion* instead spreads the updates out over
+    // real time, since network loads finish as data actually arrives.
+    let loadedAssets = 0;
+    const totalAssets = data.data.length;
+    const bumpAssetProgress = () => {
+        loadedAssets++;
+        setDataProgress(10 + (loadedAssets / totalAssets) * 70); // 10 -> 80
+    };
+
     const processedData = await Promise.all(
         data.data.map(async (item, i) => {
             const path = `data/${item.folder}/${item.image}.${item.extension}`;
 
-            setDataProgress((i / data.data.length) * 80);
             if (
                 ["png", "jpg", "jpeg", "webp", "JPG"].includes(item.extension)
             ) {
@@ -36,6 +48,19 @@ export default async function loadData() {
                             () => reject(new Error(`Image not found: ${path}`))
                         )
                     );
+
+                    // Color-managed (r3f/three r152+) textures must have their
+                    // colorSpace set BEFORE the first GPU upload, or the upload bakes
+                    // in the wrong internal format. Normally react-three-fiber sets
+                    // this for us the moment the texture is attached via a JSX `map`
+                    // prop -- but it does so with a plain property assignment, not
+                    // `needsUpdate = true`, so it never triggers a re-upload. Since we
+                    // now force the upload early ourselves (GPU offload, below) via
+                    // renderer.initTexture(), we must set colorSpace ourselves first,
+                    // otherwise that early upload permanently bakes in NoColorSpace
+                    // (linear) and the sprite stays washed out/desaturated forever,
+                    // even once r3f "corrects" the property afterwards.
+                    texture.colorSpace = THREE.SRGBColorSpace;
 
                     const image = texture.image;
                     const aspectRatio = image?.width / image?.height || 1;
@@ -56,6 +81,8 @@ export default async function loadData() {
                             path: null,
                         },
                     };
+                } finally {
+                    bumpAssetProgress();
                 }
             } else if (["mp4", "webm", "mov", "MOV"].includes(item.extension)) {
                 const video = document.createElement("video");
@@ -88,6 +115,9 @@ export default async function loadData() {
                     texture.minFilter = THREE.LinearFilter;
                     texture.magFilter = THREE.LinearFilter;
                     texture.format = THREE.RGBAFormat;
+                    // Same reasoning as the image branch above -- must be set before
+                    // the early GPU offload upload, not left for r3f to fix up later.
+                    texture.colorSpace = THREE.SRGBColorSpace;
 
                     const image = texture.image;
                     const aspectRatio =
@@ -110,9 +140,12 @@ export default async function loadData() {
                             path: null,
                         },
                     };
+                } finally {
+                    bumpAssetProgress();
                 }
             } else {
                 // Unsupported extension fallback
+                bumpAssetProgress();
                 return {
                     ...item,
                     id: i,
@@ -125,6 +158,8 @@ export default async function loadData() {
             }
         })
     );
+
+    setDataProgress(80);
 
     const reducedTrails = await fetchTrailData(
         "data/movebank_data_grouped.json",
@@ -206,10 +241,66 @@ export default async function loadData() {
         );
     });
 
+    setDataProgress(90);
+
+    // --- GPU offload -------------------------------------------------
+    // Everything above is exactly the original loading approach: one
+    // blocking batch, all images/videos in parallel. The one thing added
+    // here is pushing every already-loaded texture onto the GPU before
+    // announcing readiness, instead of leaving that upload to happen
+    // implicitly the first time each sprite is actually drawn (which is
+    // what made the landing -> scene transition heavy: a burst of GPU
+    // uploads landing in a single frame). initTexture() only enqueues the
+    // upload; gl.finish() is the one deliberate, one-time blocking call
+    // that waits for the GPU to have genuinely caught up before we call
+    // the scene "ready".
+    const renderer = useStore.getState().glRenderer;
+    if (renderer) {
+        const texturesToWarm = processedData
+            .map((entry) => entry.img?.texture)
+            .filter(Boolean);
+        const totalTextures = texturesToWarm.length;
+
+        for (let i = 0; i < totalTextures; i++) {
+            try {
+                renderer.initTexture(texturesToWarm[i]);
+            } catch (err) {
+                console.warn("initTexture failed:", err.message);
+            }
+
+            // initTexture() itself just enqueues the upload -- it's nearly
+            // instant -- so without yielding here this loop finishes in one
+            // synchronous burst and the browser never gets a chance to
+            // paint the in-between values (same issue as the asset-loading
+            // fix above). Yielding every few textures lets the bar visibly
+            // tick through 90 -> 99 instead of sitting still.
+            if (totalTextures > 0 && (i % 4 === 3 || i === totalTextures - 1)) {
+                setDataProgress(90 + ((i + 1) / totalTextures) * 9);
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            }
+        }
+
+        try {
+            // The one part of this that genuinely can't be subdivided:
+            // gl.finish() is a single opaque blocking call that waits for
+            // the GPU to actually catch up on everything enqueued above.
+            // There's no partial-completion signal to report progress on,
+            // so a short pause here before jumping to 100 is real GPU work
+            // finishing, not a UI bug.
+            renderer.getContext().finish();
+        } catch (err) {
+            console.warn("GPU finish failed:", err.message);
+        }
+    }
+
     useStore.setState({
         db: processedData,
         narratives: data.columns,
         ready: true,
+        // Gates the "Discover" UI (see NavPages.jsx / useStore.jsx) — only
+        // flips once every asset has loaded AND been pushed to the GPU
+        // above, so entering the scene has nothing left to upload.
+        dataReady: true,
         trails: reducedTrails,
         birdCenter: getCenterLastPositions(lastLatLons),
     });
@@ -220,15 +311,3 @@ export default async function loadData() {
 
     return true;
 }
-
-// let appDataPromise = null;
-
-// export default function loadAppData() {
-//     if (!appDataPromise) {
-//         console.log("🔵 Starting data load (first call)");
-//         appDataPromise = loadAppData();
-//     } else {
-//         console.log("🟢 Reusing existing promise");
-//     }
-//     return appDataPromise;
-// }

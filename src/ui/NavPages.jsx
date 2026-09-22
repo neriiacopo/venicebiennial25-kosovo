@@ -2,6 +2,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 import { useStore } from "../store/useStore";
+import { useLoadingStore } from "../store/loadingStore";
 
 import ButtonL from "./ButtonL";
 
@@ -13,11 +14,17 @@ export default function NavPages() {
     const drop = useStore((state) => state.dropNarratives);
     const activeNarratives = useStore((state) => state.activeNarratives);
     const landing = useStore((state) => state.landing);
+    const dataReady = useStore((state) => state.dataReady);
+    const dataProgress = useLoadingStore((state) => state.dataProgress);
 
     const theme = useTheme();
     const bannerH = theme.bannerH;
 
     function toggleDrop() {
+        // Don't reveal the (still empty) 3D scene before the structural
+        // data has loaded — see dataReady in useStore.jsx.
+        if (!dataReady) return;
+
         if (landing) {
             useStore.setState({ dropNarratives: !drop, landing: false });
         } else {
@@ -63,8 +70,13 @@ export default function NavPages() {
                         onClick={resetLanding}
                     />
                     <ButtonS
-                        label="Discover"
+                        label={
+                            dataReady
+                                ? "Discover"
+                                : `Loading ${Math.round(dataProgress)}%`
+                        }
                         onClick={toggleDrop}
+                        disabled={!dataReady}
                     />
                     <Box
                         sx={{
@@ -108,22 +120,24 @@ export default function NavPages() {
     );
 }
 
-function ButtonS({ label, onClick = null, clean = false }) {
+function ButtonS({ label, onClick = null, clean = false, disabled = false }) {
     return (
         <Typography
             sx={{
                 textTransform: "none",
-                textDecoration: clean ? "none" : "underline",
+                textDecoration: clean || disabled ? "none" : "underline",
                 textDecorationThickness: "1px",
                 textAlign: "left",
                 m: 0,
                 pr: clean ? 0 : 2,
-                pointerEvents: "auto",
+                pointerEvents: disabled ? "none" : "auto",
+                opacity: disabled ? 0.5 : 1,
                 backgroundColor: "transparent",
                 fontSize: "1.05rem",
+                cursor: disabled ? "default" : undefined,
             }}
-            onClick={onClick}
-            className="clickable"
+            onClick={disabled ? undefined : onClick}
+            className={disabled ? "" : "clickable"}
         >
             {label}
         </Typography>

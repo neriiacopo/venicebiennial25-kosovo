@@ -9,6 +9,7 @@ import { glowTextFx, randomStyle } from "../utils";
 
 import { useTheme } from "@mui/material/styles";
 import { useStore } from "../store/useStore";
+import { useLoadingStore } from "../store/loadingStore";
 
 export default function Landing({}) {
     const isMobile = useStore((state) => state.isMobile);
@@ -125,6 +126,7 @@ export default function Landing({}) {
 function Title({ isMobile, ...props }) {
     const theme = useTheme();
     const blurTitle = useStore((state) => state.blurTitle);
+    const dataProgress = useLoadingStore((state) => state.dataProgress);
 
     const [seed, setSeed] = useState(() => Math.floor(Math.random() * 1000));
     const mobilePressed = useStore((state) => state.mobilePressed);
@@ -141,6 +143,7 @@ function Title({ isMobile, ...props }) {
         filter: isMobile
             ? `blur(${blurTitle ? 0.5 : 5}px)`
             : `blur(${blurTitle ? 1.5 : 5}px)`,
+        //  :  `blur(${Math.round(100 - dataProgress) / 10 + 1.5}px)`,
         opacity: blurTitle ? 1 : 0,
         transition: "opacity 0.1s ease-in-out, filter 1s ease-in-out",
         fontFamily: theme.fonts.title,
@@ -198,7 +201,7 @@ function Title({ isMobile, ...props }) {
                           variant: isMobile ? "h3" : "h2",
                           styled: true,
                       },
-                  ]
+                  ],
         );
     }, [isMobile, mobilePressed]);
 
@@ -231,7 +234,7 @@ function Title({ isMobile, ...props }) {
                             textShadow: blurTitle
                                 ? glowTextFx(
                                       item.glow,
-                                      theme.colors.grey.darker
+                                      theme.colors.grey.darker,
                                       //   item.glow
                                   )
                                 : "none",

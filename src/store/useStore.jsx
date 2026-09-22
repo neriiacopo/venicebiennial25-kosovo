@@ -2,6 +2,11 @@ import { create } from "zustand";
 
 export let useStore = create((set, get) => ({
     ready: true,
+    // True once the xlsx/json structural data (positions, aspect ratios,
+    // narratives) has been parsed — not once every image/video has
+    // downloaded. Gate the landing -> scene transition on this, not on
+    // full media load, since media streams in progressively afterwards.
+    dataReady: false,
     landing: true,
     fxIntro: { landing: 2, app: 1 },
     blurTitle: false,
@@ -56,6 +61,7 @@ export let useStore = create((set, get) => ({
     },
 
     startNarrative: (narrative) => {
+        if (!get().dataReady) return;
         const db = get().db;
         const getNarrativeIds = get().getNarrativeIds;
         const setScale = get().setScale;

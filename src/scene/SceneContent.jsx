@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, Suspense } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 
 import { AsciiRenderer } from "@react-three/drei";
 import gsap from "gsap";
@@ -15,6 +15,14 @@ import { useStore } from "../store/useStore.jsx";
 import loadData from "../loading/loadAppData.js";
 
 export default function SceneContent() {
+    // Publish the WebGL renderer so the loading pipeline (outside the R3F
+    // tree) can push each loaded texture onto the GPU ahead of time — see
+    // loadAppData.js's GPU offload step.
+    const { gl } = useThree();
+    useEffect(() => {
+        useStore.setState({ glRenderer: gl });
+    }, [gl]);
+
     useEffect(() => {
         loadData();
     }, []);
